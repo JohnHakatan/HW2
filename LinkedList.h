@@ -1,6 +1,8 @@
 #ifndef LINKED_LIST_H
 #define LINKED_LIST_H
 
+using namespace std;
+
 template <class T>
 class ListNode
 {
@@ -10,23 +12,22 @@ class ListNode
     ListNode *next;
     ListNode(T data ,int id ): (data(data),id(id),next(nullptr)){}
     ~ListNode()=default;
-}
+};
 
 template <class T>
 class LinkedList
 {
-
     public:
     ListNode<T> *head;
     LinkedList():head(nullptr){}
     ~LinkedList()=default;
-    void Insert(data,id);
+    void Insert(T data,int id);
     void Remove(int id);
     ListNode<T>* Find(int id);
-}
+};
 
 template <class T>
-void Insert(data,id)
+void LinkedList<T>::Insert(T data,int id)
 {
     if(!this->head)
     {
@@ -47,7 +48,7 @@ void Insert(data,id)
 }
 
 template <class T>
-void Remove(int id)
+void LinkedList<T>::Remove(int id)
 {
     if(!find(id))
     {
@@ -70,7 +71,7 @@ void Remove(int id)
 }
 
 template <class T>
-ListNode<T>* Find(int id)
+ListNode<T>* LinkedList<T>::Find(int id)
 {
     ListNode<T>* current=this->head;
     while(current)
@@ -87,4 +88,4 @@ ListNode<T>* Find(int id)
     }
 }
 
-#endif LINKED_LIST_H
+#endif 
