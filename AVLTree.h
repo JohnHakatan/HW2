@@ -5,7 +5,7 @@
 #include <math.h>
 #include<memory>
 using namespace std;
-//idan hahomooo
+
 #define DATA_EXIST 1
 #define MEMORY_ERROR 2 
 #define ADDED 7
