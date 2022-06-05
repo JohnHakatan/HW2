@@ -22,7 +22,8 @@ class LinkedList
     LinkedList():head(nullptr){}
     ~LinkedList()=default;
     void Insert(T data,int id);
-    void Remove(int id);
+    void RemoveNode(int id);
+    void DestroyList();
     ListNode<T>* Find(int id);
 };
 
@@ -48,7 +49,7 @@ void LinkedList<T>::Insert(T data,int id)
 }
 
 template <class T>
-void LinkedList<T>::Remove(int id)
+void LinkedList<T>::RemoveNode(int id)
 {
     if(!find(id))
     {
@@ -67,6 +68,18 @@ void LinkedList<T>::Remove(int id)
             previous=current;
             current=current->next;
         }
+    }
+}
+
+template <class T>
+void LinkedList<T>::DestroyList()
+{
+    ListNode<T> current=this->head;
+    ListNode<T> previous=this->head;
+    while(current)
+    {
+        current=current->next;
+        delete previous;
     }
 }
 
