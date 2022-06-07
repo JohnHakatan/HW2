@@ -1,7 +1,7 @@
 #ifndef HASHTABLE_H
 #define HASHTABLE_H
 
-
+#define INIT_FACTOR 10
 #define LOAD_FACTOR 1
 
 #include "LinkedList.h"
@@ -14,7 +14,7 @@ class HashTable
 
     LinkedList<T> **dynamic_array;
     public:
-    HashTable(int size);
+    HashTable();
     ~HashTable(){arrayDestroy()};
     void Insert(T data,int key);
     void Remove(int key);
@@ -30,10 +30,10 @@ int HashTable<T>::hashFunction(int key)
     return (key%this->size_of_array);
 }
 template <class T>
-HashTable<T>::HashTable(int size)
+HashTable<T>::HashTable()
 {
-    this->size_of_array=size;
-    this->dynamic_array=new LinkedList<T>*[size]();
+    this->size_of_array=INIT_FACTOR;
+    this->dynamic_array=new LinkedList<T>*[INIT_FACTOR]();
 }
 
 
