@@ -19,6 +19,7 @@ class AVLNode
 {
     friend class AVLTree<T,comparator>;
     T data;
+  
     AVLNode* right;
     AVLNode* left;
     AVLNode* parent;
