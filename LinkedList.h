@@ -20,7 +20,10 @@ class LinkedList
     public:
     ListNode<T> *head;
     LinkedList():head(nullptr){}
-    ~LinkedList()=default;
+    ~LinkedList()
+    {
+        this->DestroyList();
+    }
     void Insert(T data,int id);
     void InsertInStart(T data,int id);
     void RemoveNode(int id);
