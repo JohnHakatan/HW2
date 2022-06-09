@@ -22,11 +22,19 @@ class LinkedList
     LinkedList():head(nullptr){}
     ~LinkedList()=default;
     void Insert(T data,int id);
+    void InsertInStart(T data,int id);
     void RemoveNode(int id);
     void DestroyList();
     ListNode<T>* Find(int id);
 };
 
+template <class T >
+void LinkedList<T>::InsertInStart(T data,int id)
+{
+    ListNode<T>* new_node= new ListNode<T>(data,id);
+    new_node->next=head;
+    head=new_node;
+}
 template <class T>
 void LinkedList<T>::Insert(T data,int id)
 {
