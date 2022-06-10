@@ -20,13 +20,14 @@ class AVLNode
     T data;
     AVLNode *right;
     AVLNode *left;
-    int Rank;
-    int RankAsLeaf;
+
     int sub_tree_size;
     AVLNode *parent;
     int height;
 
 public:
+    int Rank;
+    int RankAsLeaf;
     AVLNode(T data, int grade);
     ~AVLNode();
     const T &getData() const;
@@ -59,8 +60,8 @@ int AVLNode<T, comparator>::getRankAsLeaf()
 template <class T, class comparator>
 void AVLNode<T, comparator>::setRankAsLeaf(int grade)
 {
-    this->RankAsLeaf = grade;
-    this->updateRank();
+   this->RankAsLeaf = grade;
+ this->updateRank();
 }
 template <class T, class comparator>
 int AVLNode<T, comparator>::getRank()
@@ -149,7 +150,7 @@ const T &AVLNode<T, comparator>::getData() const
 }
 
 template <class T, class comparator>
-AVLNode<T, comparator>::AVLNode(T data,int grade) : data(data), right(nullptr), left(nullptr), Rank(0),RankAsLeaf(grade), sub_tree_size(1), parent(nullptr), height(1) {}
+AVLNode<T, comparator>::AVLNode(T data,int grade) : data(data), right(nullptr), left(nullptr), sub_tree_size(1), parent(nullptr), height(1), Rank(0),RankAsLeaf(grade) {}
 
 template <class T, class comparator>
 AVLNode<T, comparator> *AVLNode<T, comparator>::getLeft() const
@@ -238,6 +239,7 @@ void AVLNode<T, comparator>::updateRank()
         right_son_rank = this->getRight()->getRank();
     }
     int updated_rank = right_son_rank + left_son_rank + this->RankAsLeaf;
+   // cout<<data<<":"<<updated_rank<<endl;
     this->setRank(updated_rank);
     }
 }
@@ -257,9 +259,10 @@ class AVLTree
     int height_of_tree;
     AVLNode<T, comparator> *maxNode;
     AVLNode<T, comparator> *minNode;
-    AVLNode<T, comparator> *root;
+   
 
 public:
+ AVLNode<T, comparator> *root;
     AVLTree();
     void DestroyRecursively(AVLNode<T, comparator> *node);
     ~AVLTree();
@@ -720,20 +723,24 @@ void AVLTree<T, comparator>::update_and_check_heights(AVLNode<T, comparator> *pa
 
         if (is_leaf(to_check))
             to_check->setHeight(1);
+
         check_heights(to_check);
 
         to_check->setHeight(max(to_check->getRight()->getHeight(), to_check->getLeft()->getHeight()) + 1);
+        if(is_leaf(to_check))to_check->setHeight(1);
+
         to_check->updatSubtreeSize();
 
-        if (is_leaf(to_check))
-        {
-            to_check->setHeight(1);
-        }
+       
 
         to_check = to_check->getParent();
     }
 
     check_heights(to_check);
+    to_check->updatSubtreeSize();
+     to_check->setHeight(max(to_check->getRight()->getHeight(), to_check->getLeft()->getHeight()) + 1);
+        if(is_leaf(to_check))to_check->setHeight(1);
+
 }
 
 template <class T, class comparator>
@@ -752,8 +759,7 @@ int AVLTree<T, comparator>::AVLInsert(const T to_add,int grade)
     {
     }
     // is check that allocation work needed
-    AVLInsertTheNode(new_node);
-    updateRanksAbove(new_node,grade);
+   
     comparator cmp;
     if (this->num_of_nodes == 0)
     {
@@ -766,7 +772,9 @@ int AVLTree<T, comparator>::AVLInsert(const T to_add,int grade)
     if (cmp(to_add, (this->minNode)->getData()) < 0)
         this->minNode = new_node;
 
+    AVLInsertTheNode(new_node);
     this->num_of_nodes++;
+    updateRanksAbove(find(this->root,to_add),grade); 
     return ADDED;
 }
 
@@ -987,12 +995,16 @@ template <class T, class comparator>
 void AVLTree<T, comparator>::updateRanksAbove(AVLNode<T, comparator>* to_update,int grade)
 {    
     to_update->setRankAsLeaf(grade);
+    
     AVLNode<T, comparator>* current=to_update;
-    if(current)
+    while( current)
     {
+
         current->updateRank();
         current=current->getParent();
+
     }
+    
 }
 
 
