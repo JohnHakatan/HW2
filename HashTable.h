@@ -3,6 +3,7 @@
 
 #define INIT_FACTOR 10
 #define LOAD_FACTOR 1
+//need to add exeptions
 
 #include "LinkedList.h"
 
@@ -21,6 +22,13 @@ class HashTable
     ListNode<T> Find(int id);
     int hashFunction(int m);
     void arrayDestroy();
+    int get_size(){
+        return size_of_array;
+    }
+    LinkedList<T> get_element(int i)
+    {
+        return this->dynamic_array[hashFunction(i)];
+    }
 };
 
 template <class T>

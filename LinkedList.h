@@ -1,8 +1,7 @@
 #ifndef LINKED_LIST_H
 #define LINKED_LIST_H
-
 using namespace std;
-
+//need to add exeptions
 template <class T>
 class ListNode
 {
@@ -19,7 +18,7 @@ class LinkedList
 {
     public:
     ListNode<T> *head;
-    LinkedList():head(nullptr){}
+    LinkedList():head(nullptr),size(0){}
     ~LinkedList()
     {
         this->DestroyList();
@@ -29,6 +28,11 @@ class LinkedList
     void RemoveNode(int id);
     void DestroyList();
     ListNode<T>* Find(int id);
+    int size;
+    int get_size()
+    {
+        return this->size;
+    }
 };
 
 template <class T >
@@ -45,6 +49,7 @@ void LinkedList<T>::Insert(T data,int id)
     {
         this->head=new ListNode<T>();
         head->next=new ListNode<T>(data,id);
+        this->size++;
         return;
     }
     ListNode<T>* new_node= new ListNode<T>(data,id);
@@ -54,9 +59,11 @@ void LinkedList<T>::Insert(T data,int id)
         if(!current)
         {
             current=new_node;
+            this->size++;
             return;
         }
     }while(current)
+    
 }
 
 template <class T>
@@ -80,6 +87,8 @@ void LinkedList<T>::RemoveNode(int id)
             current=current->next;
         }
     }
+    this->size--;
+
 }
 
 template <class T>
@@ -92,6 +101,7 @@ void LinkedList<T>::DestroyList()
         current=current->next;
         delete previous;
     }
+    delete[] this;
 }
 
 template <class T>
