@@ -76,7 +76,7 @@ template <class T>
 void HashTable<T>::Remove(int key)
 {
     if(!Find(key))return;
-    LinkedList<T> to_delete_from=this->dynamic_array[key%size_of_array];
+    LinkedList<T>* to_delete_from=this->dynamic_array[key%size_of_array];
     to_delete_from->RemoveNode(key);
     this->num_of_nodes--;
     double shrink_factor=num_of_nodes/size_of_array;
@@ -90,7 +90,7 @@ void HashTable<T>::Remove(int key)
         {
             if(this->dynamic_array[i])
             {
-                ListNode<T> current=(this->dynamic_array[i])->head->next;
+                ListNode<T>* current=(this->dynamic_array[i])->head->next;
                 while(current)
                 {
                     new_array[current->id % size_of_array]->Insert(current->data,current->id);
