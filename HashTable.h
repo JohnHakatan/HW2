@@ -3,7 +3,6 @@
 
 #define INIT_FACTOR 10
 #define LOAD_FACTOR 1
-//need to add exeptions
 
 #include "LinkedList.h"
 
@@ -19,16 +18,9 @@ class HashTable
     ~HashTable(){arrayDestroy();}
     void Insert(T data,int key);
     void Remove(int key);
-    ListNode<T> Find(int id);
+    ListNode<T>* Find(int id);
     int hashFunction(int m);
     void arrayDestroy();
-    int get_size(){
-        return size_of_array;
-    }
-    LinkedList<T> get_element(int i)
-    {
-        return this->dynamic_array[hashFunction(i)];
-    }
 };
 
 template <class T>
@@ -60,7 +52,7 @@ void HashTable<T>::Insert(T data,int key)
         {
             if(this->dynamic_array[i])
             {
-                ListNode<T> current=(this->dynamic_array[i])->head->next;
+                ListNode<T>* current=(this->dynamic_array[i])->head->next;
                 while(current)
                 {
                     new_array[current->id % this->size_of_array]->Insert(current->data,current->id);
@@ -83,7 +75,7 @@ void HashTable<T>::Insert(T data,int key)
 template <class T>
 void HashTable<T>::Remove(int key)
 {
-    if(!find(key))return;
+    if(!Find(key))return;
     LinkedList<T> to_delete_from=this->dynamic_array[key%size_of_array];
     to_delete_from->RemoveNode(key);
     this->num_of_nodes--;
@@ -112,9 +104,9 @@ void HashTable<T>::Remove(int key)
 
 }
 template <class T>
-ListNode<T> HashTable<T>::Find(int id)
+ListNode<T>* HashTable<T>::Find(int id)
 {
-    return this->dynamic_array[hashFunction(id)]->Find(id);
+    return (this->dynamic_array[hashFunction(id)])->Find(id);
 }
 
 template <class T>
