@@ -19,20 +19,20 @@ class CompanyCompareByID;
 class Company
 {
 private:
-int id;
-double value;
-int num_of_employees;
+
 
 
 public:
-
+int id;
+double value;
+int num_of_employees;
 Company(const Company&)=default;
 AVLTree<shared_ptr<Employee>,EmployeeComparebySalary> employees_by_salary;
 //AVLTree<shared_ptr<Employee>,EmployeeComparebyID> employees_by_id;
 
 shared_ptr<LinkedList<Company*>> family;//to update comapny values that in the same group 
 HashTable<shared_ptr<Employee>> Employees;
-void setValue(int value);
+void setValue(double value);
 Company(int CompanyId,int Value=0):id(CompanyId),value(Value),num_of_employees(0),
 employees_by_salary(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary>()),family(nullptr),Employees(HashTable<shared_ptr<Employee>>())
 {
@@ -48,11 +48,12 @@ void RemoveEmployee(int EmployeeID);
 void addEmployeeToCompany(shared_ptr<Employee> employee);
 int increaseValue(int value_to_add);
 void updateEmployee(shared_ptr<Employee> employee);
-bool moveEmployees(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary>& employees_by_salary1,Company* company);
+bool moveEmployees(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary>& employees_by_salary1,Company* company,double Factor);
 
 
 //AVLNode<shared_ptr<Employee>,EmployeeComparebyID>* GetEmployeeById(int id);
-AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>* GetEmployeeBySalry(int id,int salary);
+shared_ptr<Employee> GetEmployee(int id);
+
 //get for the trees
 
 
@@ -180,5 +181,6 @@ class Employee
 };
 
 #endif
+
 
 
