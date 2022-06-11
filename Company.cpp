@@ -23,9 +23,9 @@ double Company::getValue() const
 }
 
 void Company::RemoveEmployee(int EmployeeID)
-{ shared_ptr<Employee> to_remove=this->Employees.Find(EmployeeID)->data;
-  AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>* to_remove1=GetEmployeeBySalry(EmployeeID,to_remove->getSalary());
-  employees_by_salary.AVLRemoveVal(to_remove1->getData());
+{// shared_ptr<Employee> to_remove=this->Employees.Find(EmployeeID)->data;
+  shared_ptr<Employee> to_remove1=GetEmployee(EmployeeID);
+  employees_by_salary.AVLRemoveVal(to_remove1);
   this->Employees.Remove(EmployeeID);
   this->num_of_employees--;
 }
@@ -42,7 +42,8 @@ void Company::addEmployeeToCompany( shared_ptr<Employee> employee)
     
     Employees.Insert(employee2,employee2->getGrade());
     this->num_of_employees++;
-}
+} 
+  
 
 
 
@@ -51,10 +52,10 @@ void Company::setValue(double value)
   this->value=value;
 }
 
-AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>* Company::GetEmployeeBySalry(int id,int salary)
+shared_ptr<Employee> Company::GetEmployee(int id)
 {
-    shared_ptr<Employee>to_find=make_shared<Employee>(id,0,salary);
-    return employees_by_salary.find(employees_by_salary.getRoot(),to_find);
+    //shared_ptr<Employee> to_find=make_shared<Employee>(id);
+    return Employees.Find(id)->data;
 }
 
 void Employee::setCompanyId(int id)
@@ -68,19 +69,24 @@ bool Company::moveEmployees(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary
     int num=employees_by_salary1.getNum_of_nodes();
     AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>*  ptr=employees_by_salary1.getMaxNode();
     while (ptr!=NULL)
-    {
-        
+    {        
         ptr->getData()->setCompanyId(this->id);
-        ptr->getData()->setCompany(company);
-     
+        ptr->getData()->setCompany(this);
         ptr=employees_by_salary1.the_next_node_iterating(ptr);
-     
     }
+
     //if returned false - error happened
     if(!this->employees_by_salary.moveTree(employees_by_salary1,this->employees_by_salary))return false;//maybe moveTree in avl must delete the old
     this->num_of_employees+=num;
+
+    //what about employee with no salary ?
+    //adding employees with no salary
+    //adding size of them
+
+
 //udpating family
 if(this->family==nullptr)
+
 {
   this->family=make_shared<LinkedList<Company*>>();
   this->family->InsertInStart(this,this->getId());
@@ -90,21 +96,20 @@ if(this->family==nullptr)
  company->family=make_shared<LinkedList<Company*>>();
 company->family->InsertInStart(company,company->getId());
 }
-//calculating values of family members
 
-    ListNode<Company*>* current=this->family->head;
+//calculating values of family members
+ListNode<Company*>* current=this->family->head;
 do
 {
   current->data->setValue(current->data->getValue()+Factor*(company->getValue()));
   current=current->next;
-} while (current);
+}while(current);
 
 //adding company to family
 current=company->family->head;//must update something in acuqired company ?
 company->family=this->family;
 
-
-    return true;
+return true;
 }
 
 void Employee::setCompany(Company*  company1)
