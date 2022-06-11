@@ -23,9 +23,10 @@ double Company::getValue() const
 }
 
 void Company::RemoveEmployee(int EmployeeID)
-{
-  AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>* to_remove1=GetEmployeeBySalry(EmployeeID,to_remove->getData()->getSalary());
+{ shared_ptr<Employee> to_remove=this->Employees.Find(EmployeeID)->data;
+  AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>* to_remove1=GetEmployeeBySalry(EmployeeID,to_remove->getSalary());
   employees_by_salary.AVLRemoveVal(to_remove1->getData());
+  this->Employees.Remove(EmployeeID);
   this->num_of_employees--;
 }
 
@@ -36,19 +37,14 @@ return this->id;
 
 void Company::addEmployeeToCompany( shared_ptr<Employee> employee)
 {
-
+    
     shared_ptr<Employee>employee2=employee;
-    employees_by_salary.AVLInsert(employee2);
+    
+    Employees.Insert(employee2,employee2->getGrade());
     this->num_of_employees++;
 }
 
-void Company::updateEmployee( shared_ptr<Employee> employee)
-{
-  RemoveEmployee(employee->getId());
-  shared_ptr<Employee> new_by_salary=employee;
-  employees_by_salary.AVLInsert(new_by_salary);
-  this->num_of_employees++; 
-}
+
 
 void Company::setValue(double value)
 {
@@ -83,18 +79,29 @@ bool Company::moveEmployees(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary
     //if returned false - error happened
     if(!this->employees_by_salary.moveTree(employees_by_salary1,this->employees_by_salary))return false;//maybe moveTree in avl must delete the old
     this->num_of_employees+=num;
-
+//udpating family
+if(this->family==nullptr)
+{
+  this->family=make_shared<LinkedList<Company*>>();
+  this->family->InsertInStart(this,this->getId());
+}
+ if(company->family==nullptr)
+{
+ company->family=make_shared<LinkedList<Company*>>();
+company->family->InsertInStart(company,company->getId());
+}
 //calculating values of family members
-    ListNode<Company>* current=this->family->head;
+
+    ListNode<Company*>* current=this->family->head;
 do
 {
   current->data->setValue(current->data->getValue()+Factor*(company->getValue()));
   current=current->next;
 } while (current);
 
-
-// adding company to family
-this->family->InsertInStart(company,company->id)
+//adding company to family
+current=company->family->head;//must update something in acuqired company ?
+company->family=this->family;
 
 
     return true;
