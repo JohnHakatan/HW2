@@ -16,7 +16,7 @@ class HashTable
     LinkedList<T> **dynamic_array;
     public:
     HashTable();
-    ~HashTable(){arrayDestroy()};
+    ~HashTable(){arrayDestroy();}
     void Insert(T data,int key);
     void Remove(int key);
     ListNode<T> Find(int id);
