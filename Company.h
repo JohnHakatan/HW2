@@ -3,11 +3,12 @@
 
 //using namespace MEVNY;
 //#include "Employee.h"
-#include "AVLTree.h"
-#include "library2.h"
+#include "AVLRanktree.h"
+//#include "library1.h"
 #include "LinkedList.h"
 #include <memory>
 #include <iostream>
+#include"HashTable.h"
 using namespace std;
 using  std::shared_ptr;
 
@@ -29,11 +30,11 @@ Company(const Company&)=default;
 AVLTree<shared_ptr<Employee>,EmployeeComparebySalary> employees_by_salary;
 //AVLTree<shared_ptr<Employee>,EmployeeComparebyID> employees_by_id;
 
-LinkedList<Company*>* family;//to update comapny values that in the same group 
-
+shared_ptr<LinkedList<Company*>> family;//to update comapny values that in the same group 
+HashTable<shared_ptr<Employee>> Employees;
 void setValue(int value);
 Company(int CompanyId,int Value=0):id(CompanyId),value(Value),num_of_employees(0),
-employees_by_salary(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary>()),family(LinkedList())
+employees_by_salary(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary>()),family(nullptr),Employees(HashTable<shared_ptr<Employee>>())
 {
   //adding Company To her Family
 this->family->InsertInStart(this,CompanyId);
@@ -109,7 +110,7 @@ class Employee
     bool operator<=(const Employee& to_compare)const;
     bool operator>(const Employee& to_compare)const;
     bool operator>=(const Employee& to_compare)const;
-    const Company* getCompany()const;
+     Company* getCompany()const;
 
  
 
@@ -179,6 +180,5 @@ class Employee
 };
 
 #endif
-
 
 
