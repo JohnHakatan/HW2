@@ -48,7 +48,8 @@ void LinkedList<T>::Insert(T data,int id)
     if(!this->head)
     {
         this->head=new ListNode<T>(data,id);
-       // head->next=new ListNode<T>(data,id);
+       // head->next=new ListNode<T>();
+       
         return;
     }
     ListNode<T>* new_node= new ListNode<T>(data,id);
@@ -114,6 +115,7 @@ ListNode<T>* LinkedList<T>::Find(int id)
             return current;
         }
     }
+    return nullptr;
 }
 
 #endif
