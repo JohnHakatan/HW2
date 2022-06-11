@@ -1,10 +1,10 @@
 #include "library2.h"   
 #include "City.h"
-void *Init()
+void *Init(int k)
 {
     City* new_city;
     try{
-        new_city=new City();
+        new_city=new City(k);
     }catch(std::bad_alloc& e){return nullptr;}
 
     return (void*)new_city;
@@ -66,21 +66,22 @@ StatusType SumOfBumpGradeBetweenTopWorkersByGroup(void *DS, int companyID, int m
     {
         return INVALID_INPUT;
     }
-      return ((City*)DS)->SumOfBumpGradeBetweenTopWorkersByGroup( companyID,  m,  sumBumpGrade)
+
+      return ((City*)DS)->SumOfBumpGradeBetweenTopWorkersByGroup( companyID,  m,  sumBumpGrade);
 }
 
 StatusType AverageBumpGradeBetweenSalaryByGroup(void *DS, int companyID, int lowerSalary, int higherSalary, void ** averageBumpGrade)
 {
  if(!DS)
     {
-        return INVALID_INPUT;
+     return INVALID_INPUT;
     }
     return ((City*)DS)->AverageBumpGradeBetweenSalaryByGroup(companyID,  lowerSalary,  higherSalary, averageBumpGrade);
 }
 
 StatusType CompanyValue(void *DS, int companyID, void ** standing)
 {
- if(!DS)
+ if(!DS || !standing)
     {
         return INVALID_INPUT;
     }
