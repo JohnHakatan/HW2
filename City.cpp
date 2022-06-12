@@ -28,17 +28,19 @@ Company* City::getCompanyById(int id)
 
    shared_ptr<Employee> City::GetEmployee(int id)
     {
-        Company** ptr=this->Companies->pointers;
-        shared_ptr<Employee> employee_to_check=nullptr;
-       while(ptr!=nullptr)
-       {
+        shared_ptr<Employee> to_return=allEmployees.find(id)->data;
+        return to_return;
+    //     Company** ptr=this->Companies->pointers;
+    //     shared_ptr<Employee> employee_to_check=nullptr;
+    //    while(ptr!=nullptr)
+    //    {
            
-        employee_to_check=(*ptr)->GetEmployee(id);
-        ptr++;
-       }
-       // shared_ptr<Employee>employee_to_check=make_shared<Employee>(id,0,salary);
-      //  return this->Companies.find(this->employees_by_salary.(),employee_to_check);
-      return employee_to_check;
+    //     employee_to_check=(*ptr)->GetEmployee(id);
+    //     ptr++;
+    //    }
+    //    // shared_ptr<Employee>employee_to_check=make_shared<Employee>(id,0,salary);
+    //   //  return this->Companies.find(this->employees_by_salary.(),employee_to_check);
+    //   return employee_to_check;
     }
 
    /* void City::updateEmployee(int EmployeeID,int SalaryIncrease,int BumpGrade)
@@ -82,10 +84,11 @@ Company* City::getCompanyById(int id)
 
    
 
-    StatusType City::AddEmployee(int EmployeeID, int CompanyID, int Salary, int Grade)
+    StatusType City::AddEmployee(int EmployeeID, int CompanyID, int Grade)
     {
         //check conditions are valid
-        if(CompanyID<=0 ||  EmployeeID<=0 || Salary<=0 || Grade<0)
+        //need to add a check for companyID<k
+        if(CompanyID<=0 ||  EmployeeID<=0  || Grade<0 ||CompanyID>num_of_companies)
         {
             return INVALID_INPUT;
         }
@@ -102,29 +105,31 @@ Company* City::getCompanyById(int id)
   
 
    
-         shared_ptr<Employee> employee_to_check=make_shared<Employee>(EmployeeID,Grade,Salary,CompanyID,company_to_update);
-            
-     
-        
+        shared_ptr<Employee> employee_to_check=make_shared<Employee>(EmployeeID,Grade,CompanyID,company_to_update);
+        allEmployees.insert(EmployeeID,employee_to_check);      
+        company_to_update->addEmployeeToCompany(employee_to_check);
+        employees_with_zero_salary++;
+        sum_of_zero_employees_grade+=Grade;
+        num_of_employees++;
 
-        int val = employees_by_id.AVLInsert(employee_to_check);
-        if(val==MEMORY_ERROR || val==DATA_EXIST)
-        {
-            return FAILURE;
-        }
+        // int val = employees_by_id.AVLInsert(employee_to_check);
+        // if(val==MEMORY_ERROR || val==DATA_EXIST)
+        // {
+        //     return FAILURE;
+        // }
 
-        val= employees_by_salary.AVLInsert(employee_to_check);
-         if(val==MEMORY_ERROR || val==DATA_EXIST)
-        {//maybe we must delete what we have inserted
-            return FAILURE;
-        }
+        // val= employees_by_salary.AVLInsert(employee_to_check);
+        //  if(val==MEMORY_ERROR || val==DATA_EXIST)
+        // {//maybe we must delete what we have inserted
+        //     return FAILURE;
+        // }
    
-        this->num_of_employees++;
-        try{
-        company_to_update->addEmployeeToCompany( employee_to_check);
-        }catch(std::bad_alloc& e){
-        throw;
-        }
+        // this->num_of_employees++;
+        // try{
+        // company_to_update->addEmployeeToCompany( employee_to_check);
+        // }catch(std::bad_alloc& e){
+        // throw;
+        // }
         return SUCCESS;
 
      
@@ -140,13 +145,20 @@ Company* City::getCompanyById(int id)
         }
 
         // check if is there an employee with the same id in the city
-    shared_ptr<Employee> employee_to_remove= this->GetEmployee(EmployeeID);
-     if(!employee_to_remove)
+        shared_ptr<Employee> employee_to_remove= this->GetEmployee(EmployeeID);
+        if(!employee_to_remove)
         {
             return FAILURE;
         }
-    
-        //this->num_of_employees--;
+        allEmployees.remove(EmployeeID);
+        if(employee_to_remove->getSalary()==0)
+        {
+            employees_with_zero_salary--;
+            sum_of_zero_employees_grade-=employee_to_remove->getGrade();
+        }
+        employee_to_remove->getCompany()->RemoveEmployee(EmployeeID);
+        employees_by_salary.AVLRemoveVal(employee_to_remove);
+        this->num_of_employees--;
         return SUCCESS;
 
     }

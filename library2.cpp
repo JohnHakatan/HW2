@@ -11,13 +11,13 @@ void *Init(int k)
 }
 
 
-StatusType AddEmployee(void *DS, int EmployeeID, int CompanyID, int Salary, int Grade)
+StatusType AddEmployee(void *DS, int EmployeeID, int CompanyID, int Grade)
 {
     if(!DS)
     {
         return INVALID_INPUT;
     }
-    return ((City*)DS)->AddEmployee(EmployeeID,CompanyID,Salary,Grade);
+    return ((City*)DS)->AddEmployee(EmployeeID,CompanyID,Grade);
 }
 
 
@@ -70,13 +70,13 @@ StatusType SumOfBumpGradeBetweenTopWorkersByGroup(void *DS, int companyID, int m
       return ((City*)DS)->SumOfBumpGradeBetweenTopWorkersByGroup( companyID,  m);
 }
 
-StatusType AverageBumpGradeBetweenSalaryByGroup(void *DS, int companyID, int lowerSalary, int higherSalary, void ** averageBumpGrade)
+StatusType AverageBumpGradeBetweenSalaryByGroup(void *DS, int companyID, int lowerSalary, int higherSalary)
 {
  if(!DS)
     {
      return INVALID_INPUT;
     }
-    return ((City*)DS)->AverageBumpGradeBetweenSalaryByGroup(companyID,  lowerSalary,  higherSalary, averageBumpGrade);
+    return ((City*)DS)->AverageBumpGradeBetweenSalaryByGroup(companyID,  lowerSalary,  higherSalary);
 }
 
 StatusType CompanyValue(void *DS, int companyID, void ** standing)

@@ -26,7 +26,7 @@ void Company::RemoveEmployee(int EmployeeID)
 {// shared_ptr<Employee> to_remove=this->Employees.Find(EmployeeID)->data;
   shared_ptr<Employee> to_remove1=GetEmployee(EmployeeID);
   employees_by_salary.AVLRemoveVal(to_remove1);
-  this->Employees.Remove(EmployeeID);
+  this->Employees.remove(EmployeeID);
   this->num_of_employees--;
 }
 
@@ -40,7 +40,7 @@ void Company::addEmployeeToCompany( shared_ptr<Employee> employee)
     
     shared_ptr<Employee>employee2=employee;
     
-    Employees.Insert(employee2,employee2->getGrade());
+    Employees.insert(employee->getId(),employee2);
     this->num_of_employees++;
 } 
   
@@ -55,7 +55,7 @@ void Company::setValue(double value)
 shared_ptr<Employee> Company::GetEmployee(int id)
 {
     //shared_ptr<Employee> to_find=make_shared<Employee>(id);
-    return Employees.Find(id)->data;
+    return Employees.find(id)->data;
 }
 
 void Employee::setCompanyId(int id)
