@@ -150,10 +150,10 @@ ListNode<T>* HashTable<T>::find(int id)
 template <class T>
 void HashTable<T>::OldArrayDestroy(int old_size)
 {
-    ListNode<T>* current,*previous;
+    //ListNode<T>* current,*previous;
     for(int i=0; i<old_size;i++)
     {
-        if(dynamic_array[i]!=nullptr)
+       /* if(dynamic_array[i]!=nullptr)
         {
             current=dynamic_array[i]->head;
             previous=current;
@@ -165,19 +165,22 @@ void HashTable<T>::OldArrayDestroy(int old_size)
 
             }
             delete dynamic_array[i];
-        }
+        }*/
+        delete dynamic_array[i];
+        dynamic_array[i]=nullptr;
     }
-    delete[] this->dynamic_array;
+
+    delete[] dynamic_array;
 }
 
 
 template <class T>
 void HashTable<T>::arrayDestroy()
 {
-    ListNode<T>* current,*previous;
+    //ListNode<T>* current,*previous;
     for(int i=0; i<this->size_of_array;i++)
     {
-        if(dynamic_array[i]!=nullptr)
+       /* if(dynamic_array[i]!=nullptr)
         {
             current=dynamic_array[i]->head;
             previous=current;
@@ -189,9 +192,12 @@ void HashTable<T>::arrayDestroy()
 
             }
             delete dynamic_array[i];
-        }
+        }*/
+        delete dynamic_array[i];
+        dynamic_array[i]=nullptr;
     }
-    delete[] this->dynamic_array;
+
+    delete[] dynamic_array;
 }
 
 
