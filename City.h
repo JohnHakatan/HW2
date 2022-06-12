@@ -33,8 +33,8 @@ class City
     StatusType RemoveEmployee(int EmployeeID);
     StatusType EmployeeSalaryIncrease( int employeeID, int salaryIncrease);
     StatusType SumOfBumpGradeBetweenTopWorkersByGroup( int companyID, int m);
-    StatusType AverageBumpGradeBetweenSalaryByGroup(int companyID, int lowerSalary, int higherSalary, void ** averageBumpGrade);
-    StatusType CompanyValue( int companyID, void ** standing);
+    StatusType AverageBumpGradeBetweenSalaryByGroup(int companyID, int lowerSalary, int higherSalary);
+    StatusType CompanyValue( int companyID);
     StatusType AcquireCompany(int AcquirerID, int TargetID, double Factor);
     StatusType BumpGradeToEmployees(int lowerSalary, int higherSalary, int bumpGrade);
     int SumbumpGradeFromTree(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary> employees_by_salary,int m);
