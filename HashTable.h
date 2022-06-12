@@ -3,7 +3,8 @@
 
 #define INIT_FACTOR 10
 #define LOAD_FACTOR 1
-
+//need to add exeptions
+#include "library2.h"
 #include "LinkedList.h"
 
 template <class T>
@@ -15,39 +16,57 @@ class HashTable
     LinkedList<T> **dynamic_array;
     public:
     HashTable();
-    ~HashTable(){arrayDestroy();}
-    void Insert(T data,int key);
-    void Remove(int key);
-    ListNode<T>* Find(int id);
+    HashTable(int size,int num_of_nodes);
+    ~HashTable(){arrayDestroy();};
+    StatusType insert(int key,T data);
+    StatusType remove(int key);
+    ListNode<T>* find(int id);
+    void OldArrayDestroy(int old_size);
     int hashFunction(int m);
     void arrayDestroy();
+    int get_size(){
+        return size_of_array;
+    }
+    LinkedList<T> get_element(int i)
+    {
+        return this->dynamic_array[hashFunction(i)];
+    }
 };
 
 template <class T>
 int HashTable<T>::hashFunction(int key)
 {
-    this->num_of_nodes=0;
     return (key%this->size_of_array);
 }
 template <class T>
-HashTable<T>::HashTable()
+HashTable<T>::HashTable():size_of_array(INIT_FACTOR),num_of_nodes(0)
 {
-    this->size_of_array=INIT_FACTOR;
     this->dynamic_array=new LinkedList<T>*[INIT_FACTOR]();
+}
+template <class T>
+HashTable<T>::HashTable(int size,int num_of_nodes):size_of_array(size),num_of_nodes(num_of_nodes)
+{
+    this->dynamic_array=new LinkedList<T>*[size]();
 }
 
 
 template <class T>
-void HashTable<T>::Insert(T data,int key)
+StatusType HashTable<T>::insert(int key,T data)
 {
+    if(find(key))return FAILURE;
     double expending_factor=(this->num_of_nodes) /(this->size_of_array);
+    LinkedList<T>** new_array;
     //check if need to expend array
     if( expending_factor>=LOAD_FACTOR)
     {
         //expending array by 2 and copy all the nodes to new array 
         int old_size=this->size_of_array;
         this->size_of_array=this->size_of_array*2;
-        LinkedList<T>** new_array=new LinkedList<T>*[this->size_of_array]();
+        
+    try{
+       new_array=new LinkedList<T>*[this->size_of_array]();
+        //need to change the return value to allocation error
+    }catch(std::bad_alloc& e){return FAILURE;}
         for(int i=0 ; i<old_size ; i++)
         {
             if(this->dynamic_array[i])
@@ -55,68 +74,130 @@ void HashTable<T>::Insert(T data,int key)
                 ListNode<T>* current=(this->dynamic_array[i])->head->next;
                 while(current)
                 {
-                    new_array[current->id % this->size_of_array]->Insert(current->data,current->id);
+                    if(!new_array[current->id % this->size_of_array])
+                    {
+                        new_array[current->id % this->size_of_array]=new LinkedList<T>();
+                    }
+                    new_array[current->id % this->size_of_array]->Insert(current->id,current->data);
                     current=current->next;
                 }
             }
-            this->arrayDestroy();
-            this->dynamic_array=new_array;
         }
+            
+        this->OldArrayDestroy(old_size);
+            this->dynamic_array=new_array;
     }
     //check if there's a list in the wanted cell in the array 
     if(!this->dynamic_array[key%this->size_of_array])
     {
-        this->dynamic_array[key%this->size_of_array]=new LinkedList<T>();
+        dynamic_array[key%this->size_of_array]=new LinkedList<T>();
     }
     //inserting a new node without expending array
-    (this->dynamic_array[key%size_of_array])->Insert(data,key);
+    (this->dynamic_array[key%size_of_array])->Insert(key,data);
     this->num_of_nodes++;
+    return SUCCESS;
+
 }
 template <class T>
-void HashTable<T>::Remove(int key)
+StatusType HashTable<T>::remove(int key)
 {
-    if(!Find(key))return;
+    if(!find(key))return FAILURE;
+
     LinkedList<T>* to_delete_from=this->dynamic_array[key%size_of_array];
     to_delete_from->RemoveNode(key);
-    this->num_of_nodes--;
     double shrink_factor=num_of_nodes/size_of_array;
+    LinkedList<T>** new_array;
     if(shrink_factor<0.5)
     {
         //shrinking the array by 2 and copy all the nodes to new array 
-        int old_size=this->size_of_array;
-        this->size_of_array=size_of_array/2;
-        LinkedList<T>** new_array=new LinkedList<T>*[this->size_of_array]();
-        for(int i=0 ; i<old_size ; i++)
+        int new_size=this->size_of_array/2;
+        try{
+             new_array=new LinkedList<T>*[new_size]();
+            //need to change the return value to allocation error
+            }   catch(std::bad_alloc& e){return FAILURE;}
+        for(int i=0 ; i<size_of_array ; i++)
         {
-            if(this->dynamic_array[i])
+            if(this->dynamic_array[i]&&this->dynamic_array[i]->size>0)
             {
                 ListNode<T>* current=(this->dynamic_array[i])->head->next;
                 while(current)
                 {
-                    new_array[current->id % size_of_array]->Insert(current->data,current->id);
+                    if(!new_array[current->id % new_size])
+                    {
+                        new_array[current->id % new_size]=new LinkedList<T>();
+                    }
+                    new_array[current->id % new_size]->Insert(current->id,current->data);
                     current=current->next;
                 }
             }
-            this->arrayDestroy();
-            this->dynamic_array=new_array;
-        }
-    }
 
+        }
+        this->num_of_nodes--;
+        arrayDestroy();
+        this->dynamic_array=new_array;
+        this->size_of_array=new_size;
+
+
+    }
+    return SUCCESS;
 }
 template <class T>
-ListNode<T>* HashTable<T>::Find(int id)
+ListNode<T>* HashTable<T>::find(int id)
 {
-    return (this->dynamic_array[hashFunction(id)])->Find(id);
+    return this->dynamic_array[hashFunction(id)]->Find(id);
 }
+
+template <class T>
+void HashTable<T>::OldArrayDestroy(int old_size)
+{
+    //ListNode<T>* current,*previous;
+    for(int i=0; i<old_size;i++)
+    {
+       /* if(dynamic_array[i]!=nullptr)
+        {
+            current=dynamic_array[i]->head;
+            previous=current;
+            while(current)
+            {
+                current=current->next;
+                delete previous;
+                previous=current;
+
+            }
+            delete dynamic_array[i];
+        }*/
+        delete dynamic_array[i];
+        dynamic_array[i]=nullptr;
+    }
+
+    delete[] dynamic_array;
+}
+
 
 template <class T>
 void HashTable<T>::arrayDestroy()
 {
+    //ListNode<T>* current,*previous;
     for(int i=0; i<this->size_of_array;i++)
     {
-        this->dynamic_array[i]->DestroyList();
+       /* if(dynamic_array[i]!=nullptr)
+        {
+            current=dynamic_array[i]->head;
+            previous=current;
+            while(current)
+            {
+                current=current->next;
+                delete previous;
+                previous=current;
+
+            }
+            delete dynamic_array[i];
+        }*/
+        delete dynamic_array[i];
+        dynamic_array[i]=nullptr;
     }
-    delete[] this->dynamic_array;
+
+    delete[] dynamic_array;
 }
 
 
