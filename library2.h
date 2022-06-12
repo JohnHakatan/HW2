@@ -40,7 +40,7 @@ StatusType EmployeeSalaryIncrease(void *DS, int employeeID, int salaryIncrease);
 
 StatusType PromoteEmployee(void *DS, int employeeID, int bumpGrade);
 
-StatusType SumOfBumpGradeBetweenTopWorkersByGroup(void *DS, int companyID, int m, void ** sumBumpGrade);
+StatusType SumOfBumpGradeBetweenTopWorkersByGroup(void *DS, int companyID, int m);
 
 StatusType AverageBumpGradeBetweenSalaryByGroup(void *DS, int companyID, int lowerSalary, int higherSalary, void ** averageBumpGrade);
 

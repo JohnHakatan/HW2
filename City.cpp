@@ -3,7 +3,7 @@ Company* City::getOriginalCompany(int id)
 {
      Company** ptr=this->Companies->pointers;
      
-if(id<0 || id>=this->Companies->n)return nullptr;
+    if(id<0 || id>=this->Companies->n)return nullptr;
      return ptr[id];
 
 }
@@ -37,7 +37,7 @@ Company* City::getCompanyById(int id)
         ptr++;
        }
        // shared_ptr<Employee>employee_to_check=make_shared<Employee>(id,0,salary);
-      //  return this->Companies.find(this->employees_by_salary.getRoot(),employee_to_check);
+      //  return this->Companies.find(this->employees_by_salary.(),employee_to_check);
       return employee_to_check;
     }
 
@@ -146,10 +146,6 @@ Company* City::getCompanyById(int id)
             return FAILURE;
         }
     
-       
-     
-   
-    
         //this->num_of_employees--;
         return SUCCESS;
 
@@ -252,7 +248,38 @@ shared_ptr<Employee>  employee_ptr=make_shared<Employee>(EmployeeID,ptr->getData
     return SUCCESS;  
     }
 
-  
+    StatusType City::SumOfBumpGradeBetweenTopWorkersByGroup( int companyID, int m)
+    {
+        //need to check companyID< k meaning
+        if( companyID<0 ||m<= 0)return FAILURE;
+        if(companyID==0)
+        {
+            if(this->num_of_employees<m)
+            {
+                return FAILURE;
+            }else{
+                SumbumpGradeFromTree(employees_by_salary,m);
+            }
+        }else{
+            SumbumpGradeFromTree(getCompanyById(companyID)->employees_by_salary,m);
+        }
+        return SUCCESS;
+    }
+
+    int City::SumbumpGradeFromTree(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary> employees_by_salary,int m)
+    {
+        if(employees_by_salary.getNum_of_nodes()<m)
+        {
+            //return failure
+        }
+        if(employees_by_salary.getNum_of_nodes()==m)
+        {
+            return employees_by_salary.getRoot()->getRank();
+        }
+        
+    }
+
+
     
     
     
