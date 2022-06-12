@@ -258,24 +258,24 @@ shared_ptr<Employee>  employee_ptr=make_shared<Employee>(EmployeeID,ptr->getData
             {
                 return FAILURE;
             }else{
-                SumbumpGradeFromTree(employees_by_salary,m);
+                SumbumpGradeFromTree(employees_by_salary.getRoot(),m);
             }
         }else{
-            SumbumpGradeFromTree(getCompanyById(companyID)->employees_by_salary,m);
+            SumbumpGradeFromTree(getCompanyById(companyID)->employees_by_salary.getRoot(),m);
         }
         return SUCCESS;
     }
 
-    int City::SumbumpGradeFromTree(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary> employees_by_salary,int m)
+    int City::SumbumpGradeFromTree(AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>* root,int m)
     {
-        if(employees_by_salary.getNum_of_nodes()<m)
-        {
-            //return failure
-        }
-        if(employees_by_salary.getNum_of_nodes()==m)
-        {
-            return employees_by_salary.getRoot()->getRank();
-        }
+        // if(employees_by_salary.getNum_of_nodes()<m)
+        // {
+        //     //return failure
+        // }
+        // if(employees_by_salary.getNum_of_nodes()==m)
+        // {
+        //     return employees_by_salary.getRoot()->getRank();
+        // }
         
     }
 
