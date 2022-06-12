@@ -16,12 +16,15 @@ class City
     UnionFind<Company>* Companies;
        
     public:
-    
+    int num_of_companies;
     int num_of_employees;
+    int employees_with_zero_salary;
+    int sum_of_zero_employees_grade;
     City(int k);
     ~City();
     City(const City& city)=default;
     AVLTree<shared_ptr<Employee>,EmployeeComparebySalary> employees_by_salary;
+    HashTable<shared_ptr<Employee>> allEmployees;
 
     Company* getCompanyById(int id);
 //AVLNode<shared_ptr<Employee>,EmployeeComparebyID>* getEmployeeById(int id);
@@ -29,7 +32,7 @@ class City
     void updateEmployee(int EmployeeID,int SalaryIncrease,int BumpGrade);
     StatusType PromoteEmployee( int EmployeeID, int SalaryIncrease, int BumpGrade);
     Company* getOriginalCompany(int id);
-    StatusType AddEmployee(int EmployeeID, int CompanyID, int Salary, int Grade);
+    StatusType AddEmployee(int EmployeeID, int CompanyID, int Grade);
     StatusType RemoveEmployee(int EmployeeID);
     StatusType EmployeeSalaryIncrease( int employeeID, int salaryIncrease);
     StatusType SumOfBumpGradeBetweenTopWorkersByGroup( int companyID, int m);
