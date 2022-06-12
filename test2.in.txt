@@ -1,0 +1,25 @@
+Init 10
+AddEmployee 17 7 29
+AddEmployee 9 3 10
+AddEmployee 25 56 -2
+AddEmployee 13 8 14
+AddEmployee 4 8 7
+AddEmployee 12 6 10
+RemoveEmployee 12
+RemoveEmployee 7
+AddEmployee 30 2 12
+AcquireCompany 2 2 10
+EmployeeSalaryIncrease 0 32
+EmployeeSalaryIncrease 17 10
+EmployeeSalaryIncrease 9 1
+PromoteEmployee -1 82
+PromoteEmployee 9 3
+PromoteEmployee 3 9
+PromoteEmployee 30 4
+SumOfBumpGradeBetweenTopWorkersByGroup  3 1
+AverageBumpGradeBetweenSalaryByGroup  0 0 10
+AcquireCompany 3 10 25
+SumOfBumpGradeBetweenTopWorkersByGroup  0 1
+AverageBumpGradeBetweenSalaryByGroup  7 0 50
+CompanyValue 16
+Quit

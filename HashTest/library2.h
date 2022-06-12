@@ -40,11 +40,11 @@ StatusType EmployeeSalaryIncrease(void *DS, int employeeID, int salaryIncrease);
 
 StatusType PromoteEmployee(void *DS, int employeeID, int bumpGrade);
 
-StatusType SumOfBumpGradeBetweenTopWorkersByGroup(void *DS, int companyID, int m);
+StatusType SumOfBumpGradeBetweenTopWorkersByGroup(void *DS, int companyID, int m, void ** sumBumpGrade);
 
-StatusType AverageBumpGradeBetweenSalaryByGroup(void *DS, int companyID, int lowerSalary, int higherSalary);
+StatusType AverageBumpGradeBetweenSalaryByGroup(void *DS, int companyID, int lowerSalary, int higherSalary, void ** averageBumpGrade);
 
-StatusType CompanyValue(void *DS, int companyID);
+StatusType CompanyValue(void *DS, int companyID, void ** standing);
 
 /*
  * 20 point Bonus function:

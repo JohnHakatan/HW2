@@ -60,14 +60,14 @@ StatusType EmployeeSalaryIncrease(void *DS, int employeeID, int salaryIncrease)
     return ((City*)DS)->EmployeeSalaryIncrease( employeeID,  salaryIncrease);
 }
 
-StatusType SumOfBumpGradeBetweenTopWorkersByGroup(void *DS, int companyID, int m, void ** sumBumpGrade)
+StatusType SumOfBumpGradeBetweenTopWorkersByGroup(void *DS, int companyID, int m)
 {
  if(!DS)
     {
         return INVALID_INPUT;
     }
 
-      return ((City*)DS)->SumOfBumpGradeBetweenTopWorkersByGroup( companyID,  m,  sumBumpGrade);
+      return ((City*)DS)->SumOfBumpGradeBetweenTopWorkersByGroup( companyID,  m);
 }
 
 StatusType AverageBumpGradeBetweenSalaryByGroup(void *DS, int companyID, int lowerSalary, int higherSalary, void ** averageBumpGrade)
