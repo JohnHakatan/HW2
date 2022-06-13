@@ -45,7 +45,6 @@ Company* City::getCompanyById(int id)
 
    /* void City::updateEmployee(int EmployeeID,int SalaryIncrease,int BumpGrade)
     {
-
         AVLNode<shared_ptr<Employee>,EmployeeComparebyID>* old_data_id=getEmployeeById(EmployeeID);
         
         int new_salary=old_data_id->getData()->getSalary()+SalaryIncrease;
@@ -61,7 +60,6 @@ Company* City::getCompanyById(int id)
         {
             throw;
         }
-
         shared_ptr<Employee> ptr=old_data_id->getData();
         employees_by_salary.AVLRemoveVal(ptr);
         employees_by_id.AVLRemoveVal(ptr);
@@ -69,14 +67,18 @@ Company* City::getCompanyById(int id)
         employees_by_id.AVLInsert(new_by_id);
         employees_by_salary.AVLInsert(new_by_id1);
         
-
     }*/
 
 
     City::City(int k){
 
    this->Companies=new UnionFind<Company>(k);
+   this->num_of_companies=k;
    this->num_of_employees=0;
+   this->employees_with_zero_salary=0;
+   this->sum_of_zero_employees_grade=0;
+   this->employees_by_salary=AVLTree<shared_ptr<Employee>,EmployeeComparebySalary>();
+    this->allEmployees=HashTable<shared_ptr<Employee>>();
 
     }
 
@@ -206,13 +208,9 @@ Company* City::getCompanyById(int id)
   if(!ptr)return FAILURE;
         AVLNode <shared_ptr<Company>,CompanyCompareByID>* ccc= getCompanyById(NewCompanyID);
         if((ccc==NULL) || ((ptr->getData()->getCompanyId())==NewCompanyID) )return FAILURE;
-
          shared_ptr<Company> company_ptr=ccc->getData();
-
-
 shared_ptr<Employee>  employee_ptr=make_shared<Employee>(EmployeeID,ptr->getData()->getGrade(),ptr->getData()->getSalary()
 ,NewCompanyID,company_ptr);
-
      RemoveEmployee(EmployeeID);
     //  return AddEmployee(EmployeeID,NewCompanyID,)
      
@@ -222,7 +220,6 @@ shared_ptr<Employee>  employee_ptr=make_shared<Employee>(EmployeeID,ptr->getData
         {
             return FAILURE;
         }
-
         val= employees_by_salary.AVLInsert(employee_ptr);
          if(val==MEMORY_ERROR || val==DATA_EXIST)
         {
@@ -232,7 +229,6 @@ shared_ptr<Employee>  employee_ptr=make_shared<Employee>(EmployeeID,ptr->getData
         {
             return ALLOCATION_ERROR;
         }
-
         this->num_of_employees++;
         try{
         company_ptr->addEmployeeToCompany(employee_ptr);
@@ -240,11 +236,81 @@ shared_ptr<Employee>  employee_ptr=make_shared<Employee>(EmployeeID,ptr->getData
         throw;
         }
         return SUCCESS;
-
-
         
     }*/
+static double find_how_many_lower_than(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary>* tree,AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>* root,int Salary)
+{
+if(!root)return 0;// check this when using the function in avg function
 
+//we arrived boundary - maybe there are more than one with Salary==Salary
+if(root->getData()->getSalary()==Salary)
+{
+    
+    if(root->getLeft()->getData()->getSalary()>Salary)
+    {
+        return root->getSub_tree_size()-1;
+    }
+    else//==
+    {
+     return find_sum_lower_than_aux(tree,root->getLeft(),Salary);
+    }
+}
+//max boundary is in the left sub - we only want the sum of the nodes before it so we don't add something 
+if(root->getData()->getSalary() < Salary)
+{
+    
+    return find_sum_lower_than_aux(tree,root->getLeft(),Salary);
+
+}
+
+//max boundary is in the right - we want all of nodes that before max_boundary so we add 
+return root->getSub_tree_size()-root->getRight()->getSub_tree_size()+find_sum_lower_than_aux(tree,root->getRight(),Salary);
+
+
+}
+
+
+static double find_sum_lower_than_aux(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary>* tree,AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>* root,int Salary)
+{
+ if(!root)return 0;// check this when using the function in avg function
+
+//we arrived boundary - maybe there are more than one with Salary==Salary
+ if(root->getData()->getSalary()==Salary)
+ {
+    
+    if(root->getLeft()->getData()->getSalary()>Salary)
+    {
+        return root->getRank()-root->getRankAsLeaf();
+    }
+    else//==
+    {
+     return find_sum_lower_than_aux(tree,root->getLeft(),Salary);
+    }
+ }
+//max boundary is in the left sub - we only want the sum of the nodes before it so we don't add something 
+ if(root->getData()->getSalary() < Salary)
+ {
+    
+    return find_sum_lower_than_aux(tree,root->getLeft(),Salary);
+
+ }
+
+//max boundary is in the right - we want all of nodes that before max_boundary so we add 
+return root->getRank()-root->getRight()->getRank()+find_sum_lower_than_aux(tree,root->getRight(),Salary);
+
+
+//not checked yet 
+}
+
+
+
+//we can use this function in SumofBump ALSO!!
+static double find_sum_lower_than(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary>* tree,int Salary)
+{
+
+return find_sum_lower_than_aux(tree,tree->root,Salary);
+
+}
     StatusType City::AcquireCompany(int AcquirerID, int TargetID, double Factor)
     {
           if(AcquirerID<=0 || TargetID<=0 || AcquirerID==TargetID || Factor< 1.0)return INVALID_INPUT;
@@ -270,29 +336,111 @@ shared_ptr<Employee>  employee_ptr=make_shared<Employee>(EmployeeID,ptr->getData
             {
                 return FAILURE;
             }else{
-                SumbumpGradeFromTree(employees_by_salary.getRoot(),m);
+                //there are not enough employees
+                if(employees_by_salary.getNum_of_nodes()<m)return FAILURE;
+                SumbumpGradeFromTree(&employees_by_salary,employees_by_salary.getRoot(),m);
             }
         }else{
-            SumbumpGradeFromTree(getCompanyById(companyID)->employees_by_salary.getRoot(),m);
+           Company* c= getCompanyById(companyID);
+           // company is not existed or there are not enough employees
+           if(!c || c->employees_by_salary.getNum_of_nodes()<m )return FAILURE;          
+            SumbumpGradeFromTree(&c->employees_by_salary,c->employees_by_salary.getRoot(),m);
         }
         return SUCCESS;
     }
 
-    int City::SumbumpGradeFromTree(AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>* root,int m)
-    {
-        // if(employees_by_salary.getNum_of_nodes()<m)
-        // {
-        //     //return failure
-        // }
-        // if(employees_by_salary.getNum_of_nodes()==m)
-        // {
-        //     return employees_by_salary.getRoot()->getRank();
-        // }
+  static AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>*  find_m_node(AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>* root,int m)
+    {   
+        // found or leaf 
+        if(1==m )return root;
+
         
+        if(root->getSub_tree_size()==m)
+         return find_m_node(root->getRight(),m-root->getLeft()->getSub_tree_size()-1);
+        
+        if(root->getSub_tree_size()>m)
+        {
+            if(root->getLeft()->getSub_tree_size() < m)return find_m_node(root->getRight(),m-root->getLeft()->getSub_tree_size()-1);
+            if(root->getLeft()->getSub_tree_size() >=m)return find_m_node(root->getLeft(),m);
+        }
+  
+
+       // if there are enough nodes it will not arrive here  
+   return nullptr;
+
+    
+    }
+    
+
+    int City::SumbumpGradeFromTree(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary>* tree,AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>* root,int m)
+    {
+        
+AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>* m_element=find_m_node(root,m);
+double sum=0;
+
+//sum+=find_sum_lower_than(tree,)
+
+return 0 ;
+       
+
+
+
     }
 
 
+    StatusType City::AverageBumpGradeBetweenSalaryByGroup( int companyID, int lowerSalary, int higherSalary)
+    {
+        double grades_sum_salary_0=0;
+        int num_of_zeros=0;
+        AVLTree<shared_ptr<Employee>,EmployeeComparebySalary>* tree=nullptr;
+        Company* c_ptr=nullptr;
+        if(higherSalary<0 || lowerSalary<0 || lowerSalary>higherSalary || companyID > this->num_of_companies || companyID<0)return INVALID_INPUT;
+        if(companyID==0){
+            
+               
+           tree=&(this->employees_by_salary);
+grades_sum_salary_0=this->sum_of_zero_employees_grade;
+num_of_zeros=this->employees_with_zero_salary;
+
+        }
+        else//positive
+        {
+            c_ptr=this->Companies->findd(companyID);
+            grades_sum_salary_0=c_ptr->sum_of_zero_employees_grade;
+            num_of_zeros=c_ptr->employees_with_zero_salary;
+
+        }
+
+    if(num_of_zeros==0 && tree->getNum_of_nodes()==0)
+    {
+return FAILURE;
+    }
+double toRtn=0;
+    if(tree->getNum_of_nodes()!=0){
+        double first=find_sum_lower_than(tree,lowerSalary);
+        double last=find_sum_lower_than(tree,higherSalary);
+
+        int num_first=find_how_many_lower_than(tree,tree->root,lowerSalary);
+        int num_last=find_how_many_lower_than(tree,tree->root,higherSalary);
+
+       
+       toRtn=(grades_sum_salary_0 + last-first)/(num_of_zeros + num_last-num_first+1);
     
+    }else
+    {
+        toRtn=(grades_sum_salary_0)/(num_of_zeros);  
+    }
+
+    //printing ... maybe we must add it to some parameter and print with c printf
+
+        return SUCCESS;
+
+
+    }
+
+
+
+
     
     
     void City::destroyCity()
@@ -301,5 +449,22 @@ shared_ptr<Employee>  employee_ptr=make_shared<Employee>(EmployeeID,ptr->getData
     }
     City::~City()
     {
-       
+       delete Companies;
     }
+
+
+    /*
+    if(m_element->getParent()->getLeft()==m_element)//if it is left son of parent we must add to sum only left rank of it + if is there another left side 
+{
+    double s= (m_element->getRight() ? m_element->getRight()->getRank(): 0 );
+    sum+=(m_element->getRank()-s);
+    AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>* current= m_element;
+    while(current->getParent())current=current->getParent();
+    sum+=(current->getRankAsLeaf()+current->getLeft()->getRank());
+
+    
+}
+if(m_element->getParent()->getRight()==m_element)
+{
+    sum+=m_element->getLeft()->getRank();
+}*/
