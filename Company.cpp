@@ -37,9 +37,7 @@ return this->id;
 
 void Company::addEmployeeToCompany( shared_ptr<Employee> employee)
 {
-    
     shared_ptr<Employee>employee2=employee;
-    
     Employees.insert(employee->getId(),employee2);
     this->num_of_employees++;
 } 
