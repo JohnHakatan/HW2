@@ -25,9 +25,17 @@ double Company::getValue() const
 void Company::RemoveEmployee(int EmployeeID)
 {// shared_ptr<Employee> to_remove=this->Employees.Find(EmployeeID)->data;
   shared_ptr<Employee> to_remove1=GetEmployee(EmployeeID);
+  if(to_remove1->getSalary()==0)
+  {
+    this->employees_with_zero_salary--;
+    this->sum_of_zero_employees_grade-=to_remove1->getGrade();
+  }
+
   employees_by_salary.AVLRemoveVal(to_remove1);
   this->Employees.remove(EmployeeID);
   this->num_of_employees--;
+
+
 }
 
 int Company::getId()const
@@ -40,6 +48,10 @@ void Company::addEmployeeToCompany( shared_ptr<Employee> employee)
     shared_ptr<Employee>employee2=employee;
     Employees.insert(employee->getId(),employee2);
     this->num_of_employees++;
+    this->employees_with_zero_salary++;
+    this->sum_of_zero_employees_grade+=employee->getGrade();
+
+
 } 
   
 
@@ -64,7 +76,7 @@ void Employee::setCompanyId(int id)
 bool Company::moveEmployees(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary>& employees_by_salary1,Company* company,double Factor)
 {
 //movingEmployees
-    int num=employees_by_salary1.getNum_of_nodes();
+    int num=((company->Employees)->num_of_nodes);
     AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>*  ptr=employees_by_salary1.getMaxNode();
     while (ptr!=NULL)
     {        
@@ -73,9 +85,15 @@ bool Company::moveEmployees(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary
         ptr=employees_by_salary1.the_next_node_iterating(ptr);
     }
 
-    //if returned false - error happened
+    //if returned false - error happened - udpating tree
     if(!this->employees_by_salary.moveTree(employees_by_salary1,this->employees_by_salary))return false;//maybe moveTree in avl must delete the old
+    
+    //updating hashTables
+    this->Employees.merge(company->Employees);
+
     this->num_of_employees+=num;
+    
+    
 
     //what about employee with no salary ?
     //adding employees with no salary
@@ -83,6 +101,7 @@ bool Company::moveEmployees(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary
 
 
 //udpating family
+//is the complexity here is good ?
 if(this->family==nullptr)
 
 {
@@ -99,8 +118,10 @@ company->family->InsertInStart(company,company->getId());
 ListNode<Company*>* current=this->family->head;
 do
 {
+
   current->data->setValue(current->data->getValue()+Factor*(company->getValue()));
   current=current->next;
+
 }while(current);
 
 //adding company to family
@@ -110,19 +131,19 @@ company->family=this->family;
 return true;
 }
 
-void Employee::setCompany(Company*  company1)
+void Employee::setCompany(Company* company1)
 {
     this->company=company1;
 }
 
 void Employee::setSalary(int salary)
 {
-        this->salary=salary;
+  this->salary=salary;
 }
 
 void Employee::setGrade(int grade)
 {
-        this->grade=grade;
+  this->grade=grade;
 }
 
 int Employee::getId()const

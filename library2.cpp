@@ -79,13 +79,13 @@ StatusType AverageBumpGradeBetweenSalaryByGroup(void *DS, int companyID, int low
     return ((City*)DS)->AverageBumpGradeBetweenSalaryByGroup(companyID,  lowerSalary,  higherSalary);
 }
 
-StatusType CompanyValue(void *DS, int companyID, void ** standing)
+StatusType CompanyValue(void *DS, int companyID)
 {
- if(!DS || !standing)
+ if(!DS)
     {
         return INVALID_INPUT;
     }
-    return ((City*)DS)->CompanyValue( companyID, standing);
+    return ((City*)DS)->CompanyValue(companyID);
 }
 
 StatusType BumpGradeToEmployees(void *DS, int lowerSalary, int higherSalary, int bumpGrade)

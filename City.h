@@ -5,6 +5,7 @@
 #include "AVLRankTree.h"
 #include "unionfind.h"
 #include "Company.h"
+#include <cstdio>
 //#include "Employee.h"
 #include<memory>
 #ifdef __cplusplus
@@ -36,12 +37,11 @@ class City
     StatusType RemoveEmployee(int EmployeeID);
     StatusType EmployeeSalaryIncrease( int employeeID, int salaryIncrease);
     StatusType SumOfBumpGradeBetweenTopWorkersByGroup( int companyID, int m);
-    
     StatusType AverageBumpGradeBetweenSalaryByGroup(int companyID, int lowerSalary, int higherSalary);
-    StatusType CompanyValue( int companyID, void ** standing);
+    StatusType CompanyValue( int companyID);
     StatusType AcquireCompany(int AcquirerID, int TargetID, double Factor);
     StatusType BumpGradeToEmployees(int lowerSalary, int higherSalary, int bumpGrade);
-    int SumbumpGradeFromTree(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary>* tree ,AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>* root,int m);
+    double SumbumpGradeFromTree(AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>* root,int m);
     void destroyCity();
 };
 

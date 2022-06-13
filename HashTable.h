@@ -10,9 +10,6 @@
 template <class T>
 class HashTable
 {
-    
-
-    
     public:
     int size_of_array;
     int num_of_nodes;
@@ -26,15 +23,30 @@ class HashTable
     void OldArrayDestroy(int old_size);
     int hashFunction(int m);
     void arrayDestroy();
-    int get_size(){
-        return size_of_array;
-    }
+    void merge(HashTable<T>*)tr;
     LinkedList<T> get_element(int i)
     {
         return this->dynamic_array[hashFunction(i)];
     }
+    int get_size(){
+        return size_of_array;
+    }
 };
+template<class T>
+void HashTable<T>::merge(HashTable<T>* ptr)
+{
 
+    for(int i=0;i<ptr->size_of_array;i++)
+    {
+        ListNode<T>* to_move=(ptr->dynamic_array[i]->head);
+        while(to_move)
+        {
+            this->insert(to_move->id,to_move->data);
+            to_move=to_move->next();
+        }
+    }
+    ptr->arrayDestroy();
+}
 template <class T>
 int HashTable<T>::hashFunction(int key)
 {
