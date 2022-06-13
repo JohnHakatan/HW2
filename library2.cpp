@@ -31,13 +31,13 @@ StatusType RemoveEmployee(void *DS, int EmployeeID)
 }
 
 
-StatusType PromoteEmployee(void *DS, int EmployeeID, int SalaryIncrease, int BumpGrade)
+StatusType PromoteEmployee(void *DS, int EmployeeID, int BumpGrade)
 {
     if(!DS)
     {
         return INVALID_INPUT;
     }
-    return ((City*)DS)->PromoteEmployee(EmployeeID,SalaryIncrease,BumpGrade);
+    return ((City*)DS)->PromoteEmployee(EmployeeID,BumpGrade);
 }
 
 

@@ -123,16 +123,40 @@ Company* City::getCompanyById(int id)
         {
             employees_with_zero_salary--;
             sum_of_zero_employees_grade-=employee_to_remove->getGrade();
+        }else{
+            employees_by_salary.AVLRemoveVal(employee_to_remove);
         }
-
         employee_to_remove->getCompany()->RemoveEmployee(EmployeeID);
-        employees_by_salary.AVLRemoveVal(employee_to_remove);
         this->num_of_employees--;
         return SUCCESS;
 
     }
     
     
+    StatusType City::EmployeeSalaryIncrease(int employeeID, int salaryIncrease)
+    {
+        if(employeeID <= 0 || salaryIncrease <=0)
+        {
+            return INVALID_INPUT;
+        }
+        if(!(allEmployees.find(employeeID)))
+        {
+            return FAILURE;
+        }
+        shared_ptr<Employee> to_update=allEmployees.find(employeeID)->data;
+        int old_salary=to_update->getSalary();
+
+        to_update->setSalary(salaryIncrease+old_salary);
+        employees_by_salary.AVLInsert(to_update,to_update->getGrade());
+        to_update->getCompany()->employees_by_salary.AVLInsert(to_update,to_update->getGrade());
+        if(old_salary==0)
+        {
+            employees_with_zero_salary--;
+            sum_of_zero_employees_grade-=to_update->getGrade();
+            //might need to update same company fields
+        }
+        return SUCCESS;
+    }
 
     StatusType City::PromoteEmployee( int EmployeeID, int BumpGrade)
     {
@@ -146,14 +170,12 @@ Company* City::getCompanyById(int id)
         {
             return FAILURE;
         }
+        
+        this->RemoveEmployee(EmployeeID);
+        //to_update->setGrade(to_update->getGrade()+BumpGrade);
+        this->AddEmployee(EmployeeID,to_update->getCompany()->getId(),to_update->getGrade()+BumpGrade);
+        this->EmployeeSalaryIncrease(EmployeeID,to_update->getSalary());
     
-     this->RemoveEmployee(EmployeeID);
-     //to_update->setGrade(to_update->getGrade()+BumpGrade);
-     this->AddEmployee(EmployeeID,to_update->getCompany()->getId(),to_update->getGrade()+BumpGrade);
-     this->EmployeeSalaryIncrease(EmployeeID,to_update->getSalary());
-     
-      
-
         return SUCCESS;
     }
 
@@ -248,7 +270,7 @@ return find_sum_lower_than_aux(tree,tree->root,Salary);
     return SUCCESS;  
     }
 
-    StatusType City::SumOfBumpGradeBetweenTopWorkersByGroup( int companyID, int m)
+    StatusType City::SumOfBumpGradeBetweenTopWorkersByGroup(int companyID, int m)
     {
         //need to check companyID< k meaning
         if( companyID<0 ||m<= 0)return FAILURE;
