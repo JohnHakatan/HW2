@@ -10,11 +10,13 @@
 template <class T>
 class HashTable
 {
+    
+
+    
+    public:
     int size_of_array;
     int num_of_nodes;
-
     LinkedList<T> **dynamic_array;
-    public:
     HashTable();
     HashTable(int size,int num_of_nodes);
     ~HashTable(){arrayDestroy();};
