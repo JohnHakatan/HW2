@@ -35,6 +35,8 @@ public:
     {
         // Finds the representative of the set
         // that x is an element of
+        
+        if(x >= this->n)return nullptr;// check this
         if (parent[x]->getId() != x) {
  
         
@@ -44,8 +46,10 @@ public:
  
         return parent[x];
     }
+    
     int find(int x)
     {
+
         return findd(x)->getId();
     }
  
