@@ -32,7 +32,7 @@ void Company::RemoveEmployee(int EmployeeID)
   }
 
   employees_by_salary.AVLRemoveVal(to_remove1);
-  this->Employees.remove(EmployeeID);
+  this->Employees->remove(EmployeeID);
   this->num_of_employees--;
 
 
@@ -46,7 +46,7 @@ return this->id;
 void Company::addEmployeeToCompany( shared_ptr<Employee> employee)
 {
     shared_ptr<Employee>employee2=employee;
-    Employees.insert(employee->getId(),employee2);
+    Employees->insert(employee->getId(),employee2);
     this->num_of_employees++;
     this->employees_with_zero_salary++;
     this->sum_of_zero_employees_grade+=employee->getGrade();
@@ -65,7 +65,7 @@ void Company::setValue(double value)
 shared_ptr<Employee> Company::GetEmployee(int id)
 {
     //shared_ptr<Employee> to_find=make_shared<Employee>(id);
-    return Employees.find(id)->data;
+    return Employees->find(id)->data;
 }
 
 void Employee::setCompanyId(int id)
@@ -76,7 +76,7 @@ void Employee::setCompanyId(int id)
 bool Company::moveEmployees(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary>& employees_by_salary1,Company* company,double Factor)
 {
 //movingEmployees
-    int num=(company->Employees.num_of_nodes);
+    int num=(company->Employees->num_of_nodes);
     AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>*  ptr=employees_by_salary1.getMaxNode();
     while (ptr!=NULL)
     {        
@@ -89,7 +89,7 @@ bool Company::moveEmployees(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary
     if(!this->employees_by_salary.moveTree(employees_by_salary1,this->employees_by_salary))return false;//maybe moveTree in avl must delete the old
     
     //updating hashTables
-    this->Employees.merge(&company->Employees);
+    this->Employees->merge(company->Employees);
 
     this->num_of_employees+=num;
     

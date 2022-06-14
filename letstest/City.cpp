@@ -3,7 +3,7 @@ Company *City::getOriginalCompany(int id)
 {
     Company **ptr = this->Companies->pointers;
 
-    if (id < 0 || id > this->Companies->n)
+    if (id <= 0 || id > this->Companies->n)
         return nullptr;
 
     return ptr[id-1];
@@ -32,7 +32,7 @@ StatusType City::CompanyValue(int companyID)
 
 shared_ptr<Employee> City::GetEmployee(int id)
 {
-    ListNode<shared_ptr<Employee>>* to_return = allEmployees.find(id);
+    ListNode<shared_ptr<Employee>>* to_return = allEmployees->find(id);
 if(!to_return)return nullptr;
 
 shared_ptr<Employee> rtn=to_return->data;
@@ -61,13 +61,15 @@ City::City(int k)
     this->employees_with_zero_salary = 0;
     this->sum_of_zero_employees_grade = 0;
     this->employees_by_salary = AVLTree<shared_ptr<Employee>, EmployeeComparebySalary>();
-    this->allEmployees =HashTable<shared_ptr<Employee>>();
+    this->allEmployees = new  HashTable<shared_ptr<Employee>>();
 }
 City::~City()
 {
     //delete this->employees_by_salary;
-   // delete this->allEmployees;
+     
+    delete this->allEmployees;
     delete this->Companies;
+  
 }
 
 StatusType City::AddEmployee(int EmployeeID, int CompanyID, int Grade)
@@ -90,8 +92,8 @@ StatusType City::AddEmployee(int EmployeeID, int CompanyID, int Grade)
         return FAILURE;
     // employee_to_check(nullptr);
 
-    shared_ptr<Employee> employee_to_check = make_shared<Employee>(EmployeeID, Grade,0, CompanyID, company_to_update);
-    allEmployees.insert(EmployeeID, employee_to_check);
+    shared_ptr<Employee> employee_to_check = make_shared<Employee>(EmployeeID, Grade,0, CompanyID-1, company_to_update);
+    allEmployees->insert(EmployeeID, employee_to_check);
     company_to_update->addEmployeeToCompany(employee_to_check);
     employees_with_zero_salary++;
     sum_of_zero_employees_grade += Grade;
@@ -114,7 +116,7 @@ StatusType City::RemoveEmployee(int EmployeeID)
         return FAILURE;
     }
 
-    allEmployees.remove(EmployeeID);
+
     if (employee_to_remove->getSalary() == 0)
     {
         employees_with_zero_salary--;
@@ -126,6 +128,8 @@ StatusType City::RemoveEmployee(int EmployeeID)
     }
     employee_to_remove->getCompany()->RemoveEmployee(EmployeeID);
     this->num_of_employees--;
+
+        allEmployees->remove(EmployeeID);
     return SUCCESS;
 }
 

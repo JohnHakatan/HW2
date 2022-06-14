@@ -47,7 +47,7 @@ void HashTable<T>::merge(HashTable<T>* ptr)
             to_move=to_move->next;
         }
     }
-    ptr->arrayDestroy();
+   // ptr->arrayDestroy();
 }
 template <class T>
 int HashTable<T>::hashFunction(int key)
@@ -147,6 +147,11 @@ StatusType HashTable<T>::remove(int key)
              new_array=new LinkedList<T>*[new_size]();
             //need to change the return value to allocation error
             }   catch(std::bad_alloc& e){return FAILURE;}
+    
+       for(int j=0;j<new_size;j++)
+    {
+       new_array[j]=nullptr;
+    }
         for(int i=0 ; i<size_of_array ; i++)
         {
             if(this->dynamic_array[i]&&this->dynamic_array[i]->size>0)
