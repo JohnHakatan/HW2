@@ -7,12 +7,12 @@ using namespace std;
 template<class T>
 class UnionFind{
    // int *rank;
-     T** parent; 
-     T** pointers;
-     int n;
+     
  
 public:
-  
+  T** parent; 
+     T** pointers;
+     int n;
     UnionFind(int n)
     {
        // rank = new int[n];
@@ -75,10 +75,10 @@ for(int i=0;i<n;i++)
         if (xset == yset)
             return false;
 
-        T* to_move=parent[yset];
+       // T* to_move=parent[yset];
         parent[yset] = findd(xset);
-        parent[yset]->moveEmployees(to_move);
-    
+        //parent[yset]->moveEmployees(to_move);
+    return true;
 
 
     }
