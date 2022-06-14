@@ -1,4 +1,5 @@
 #include "City.h"
+#include <cmath>
 Company *City::getOriginalCompany(int id)
 {
     Company **ptr = this->Companies->pointers;
@@ -148,7 +149,11 @@ StatusType City::PromoteEmployee(int EmployeeID, int BumpGrade)
     }
 if(BumpGrade>=0){
     to_update->setGrade(to_update->getGrade() + BumpGrade);
-    
+   to_update->getCompany()->employees_by_salary.AVLRemoveVal(to_update);
+   to_update->getCompany()->employees_by_salary.AVLInsert(to_update,to_update->getGrade());
+   
+   employees_by_salary.AVLRemoveVal(to_update);
+   employees_by_salary.AVLInsert(to_update,to_update->getGrade());
 //to_update->getCompany()->employees_by_salary.updateRanksAbove(to_update->getCompany()->employees_by_salary.find(to_update->getCompany()->employees_by_salary.getRoot(),to_update),to_update->getGrade());
 //employees_by_salary.updateRanksAbove(employees_by_salary.find(employees_by_salary.getRoot(),to_update),to_update->getGrade());
     if (to_update->getSalary() == 0)
@@ -233,7 +238,7 @@ static double find_how_many_lower_than(AVLTree<shared_ptr<Employee>, EmployeeCom
      return root->getSub_tree_size();
 }
 
-static double find_sum_lower_than_aux(AVLTree<shared_ptr<Employee>, EmployeeComparebySalary> *tree, AVLNode<shared_ptr<Employee>, EmployeeComparebySalary> *root, int Salary)
+/*static double find_sum_lower_than_aux(AVLTree<shared_ptr<Employee>, EmployeeComparebySalary> *tree, AVLNode<shared_ptr<Employee>, EmployeeComparebySalary> *root, int Salary)
 {
     if (!root)
         return 0; // check this when using the function in avg function
@@ -260,7 +265,7 @@ static double find_sum_lower_than_aux(AVLTree<shared_ptr<Employee>, EmployeeComp
 
     // max boundary is in the right - we want all of nodes that before max_boundary so we add
      if(root->getRight() &&root->getLeft())return root->getRank() - root->getRight()->getRank() + find_sum_lower_than_aux(tree, root->getRight(), Salary);
-     if(root->getRight()) return root->getRank() - root->getRight()->getRank();
+   //  if(root->getRight()) return root->getRank() - root->getRight()->getRank();
      if(root->getLeft())return root->getRank() + find_sum_lower_than_aux(tree, root->getRight(), Salary);
      return root->getRank();
     // not checked yet
@@ -272,7 +277,7 @@ static double find_sum_lower_than(AVLTree<shared_ptr<Employee>, EmployeeCompareb
 
     return find_sum_lower_than_aux(tree, tree->root, Salary);
 
-}
+}*/
 StatusType City::AcquireCompany(int AcquirerID, int TargetID, double Factor)
 {
     if (AcquirerID <= 0 || TargetID <= 0 || AcquirerID == TargetID || Factor < 1.0 || TargetID > num_of_companies)
@@ -298,7 +303,7 @@ StatusType City::SumOfBumpGradeBetweenTopWorkersByGroup(int companyID, int m)
     // need to check companyID< k meaning
     if (companyID < 0 || m <= 0 ||companyID > num_of_companies)
         return FAILURE;
-    double sum_to_print = 0;
+    long long int  sum_to_print = 0;
     if (companyID == 0)
     {
         if (this->num_of_employees < m)
@@ -321,7 +326,7 @@ StatusType City::SumOfBumpGradeBetweenTopWorkersByGroup(int companyID, int m)
             sum_to_print = SumbumpGradeFromTree(c->employees_by_salary.getRoot(), m);
         }
 
-    printf("SumOfBumpGradeBetweenTopWorkersByGroup: %.1f\n",sum_to_print);
+    printf("SumOfBumpGradeBetweenTopWorkersByGroup: %lld\n",sum_to_print);
 
 
     return SUCCESS;
@@ -417,21 +422,21 @@ StatusType City::AverageBumpGradeBetweenSalaryByGroup(int companyID, int lowerSa
     if(!tree)tree=&c_ptr->employees_by_salary;
     if (tree->getNum_of_nodes() != 0)
     {
-        double first = find_sum_lower_than(tree, lowerSalary);
-        double last = find_sum_lower_than(tree, higherSalary);
+        //double first = find_sum_lower_than(tree, lowerSalary);
+        //double last = find_sum_lower_than(tree, higherSalary);
 
         int num_first = find_how_many_lower_than(tree, tree->root, lowerSalary);
         int num_last = find_how_many_lower_than(tree, tree->root, higherSalary);
-      cout<<grades_sum_salary_0<<endl;
-      cout<<last<<endl;
-      cout<<first<<endl;
-      cout<<num_first<<endl;
-      cout<<num_last<<endl;
-      cout<<num_of_zeros<<endl;
-        toRtn = (grades_sum_salary_0 + last - first) / (num_of_zeros + num_last - num_first + 1);
+        double first = SumbumpGradeFromTree(tree->root,num_first);
+        double last = SumbumpGradeFromTree(tree->root,num_last);
+      int me5ane=1;
+      if((num_of_zeros + num_first - num_last)!=0)me5ane=(num_of_zeros + num_first - num_last );
+        toRtn = (grades_sum_salary_0 - last  +first) / (me5ane) ;
+
     }
     else 
     {
+        
         toRtn = (grades_sum_salary_0) / (num_of_zeros);
     }
 
