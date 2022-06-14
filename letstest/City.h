@@ -7,6 +7,7 @@
 #include "Company.h"
 #include "HashTable.h"
 #include <cstdio>
+//#include "Employee.h"
 #include<memory>
 #ifdef __cplusplus
 extern "C" {
@@ -41,7 +42,7 @@ class City
     StatusType CompanyValue( int companyID);
     StatusType AcquireCompany(int AcquirerID, int TargetID, double Factor);
     StatusType BumpGradeToEmployees(int lowerSalary, int higherSalary, int bumpGrade);
-    long long int SumbumpGradeFromTree(AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>* root,int m);
+    double SumbumpGradeFromTree(AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>* root,int m);
     void destroyCity();
 };
 
