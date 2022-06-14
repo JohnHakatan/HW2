@@ -6,12 +6,12 @@ Company *City::getOriginalCompany(int id)
     if (id <= 0 || id > this->Companies->n)
         return nullptr;
 
-    return ptr[id-1];
+    return ptr[id];
 }
 
 Company *City::getCompanyById(int id)
 {
-    return this->Companies->findd(id-1);
+    return this->Companies->findd(id);
 }
 
 StatusType City::CompanyValue(int companyID)
@@ -55,7 +55,7 @@ void City::updateEmployee(shared_ptr<Employee> em, int EmployeeID, int SalaryInc
 City::City(int k)
 {
 
-    this->Companies = new UnionFind<Company>(k);
+    this->Companies = new UnionFind<Company>(k+1);
     this->num_of_companies = k;
     this->num_of_employees = 0;
     this->employees_with_zero_salary = 0;
@@ -92,7 +92,7 @@ StatusType City::AddEmployee(int EmployeeID, int CompanyID, int Grade)
         return FAILURE;
     // employee_to_check(nullptr);
 
-    shared_ptr<Employee> employee_to_check = make_shared<Employee>(EmployeeID, Grade,0, CompanyID-1, company_to_update);
+    shared_ptr<Employee> employee_to_check = make_shared<Employee>(EmployeeID, Grade,0, CompanyID, company_to_update);
     allEmployees->insert(EmployeeID, employee_to_check);
     company_to_update->addEmployeeToCompany(employee_to_check);
     employees_with_zero_salary++;
@@ -278,6 +278,8 @@ StatusType City::AcquireCompany(int AcquirerID, int TargetID, double Factor)
 
     if (!Acquirer_ptr->moveEmployees(Target_ptr->employees_by_salary, Target_ptr, Factor))
         return FAILURE; // dont forget employee with no salary
+    this->Companies->unioun_groups_no_checking(AcquirerID,TargetID);
+    
     return SUCCESS;
 }
 

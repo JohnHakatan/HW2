@@ -102,7 +102,7 @@ bool Company::moveEmployees(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary
 
 //udpating family
 //is the complexity here is good ?
-if(this->family==nullptr)
+/*if(this->family==nullptr)
 
 {
   this->family=make_shared<LinkedList<Company*>>();
@@ -112,7 +112,7 @@ if(this->family==nullptr)
 {
  company->family=make_shared<LinkedList<Company*>>();
 company->family->InsertInStart(company,company->getId());
-}
+}*/
 
 //calculating values of family members
 ListNode<Company*>* current=this->family->head->next;
@@ -126,8 +126,13 @@ do
 }while(current);
 
 //adding company to family
-current=company->family->head;//must update something in acuqired company ?
-company->family=this->family;
+//current=company->family->head;//must update something in acuqired company ?
+ListNode<Company*>* current1=company->family->head->next;
+while(current1)
+{
+ this->family->InsertInStart(current1->data,current1->id);
+  current1=current1->next;
+}
 
 return true;
 }
