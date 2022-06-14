@@ -288,7 +288,7 @@ StatusType City::SumOfBumpGradeBetweenTopWorkersByGroup(int companyID, int m)
     // need to check companyID< k meaning
     if (companyID < 0 || m <= 0 ||companyID > num_of_companies)
         return FAILURE;
-    double sum_to_print = 0;
+    long long int sum_to_print = 0;
     if (companyID == 0)
     {
         if (this->num_of_employees < m)
@@ -310,7 +310,7 @@ StatusType City::SumOfBumpGradeBetweenTopWorkersByGroup(int companyID, int m)
                 return FAILURE;
             sum_to_print = SumbumpGradeFromTree(c->employees_by_salary.getRoot(), m);
         }
-    printf("sumOfBumpGradeBetweenTopWorkersByGroup: %f\n",sum_to_print);
+    printf("sumOfBumpGradeBetweenTopWorkersByGroup: %lld\n",sum_to_print);
     return SUCCESS;
 }
 
@@ -352,7 +352,7 @@ AVLNode<shared_ptr<Employee>, EmployeeComparebySalary> *Select(AVLNode<shared_pt
 //     }
 // }
 
-double City::SumbumpGradeFromTree(AVLNode<shared_ptr<Employee>, EmployeeComparebySalary> *root, int m)
+long long int City::SumbumpGradeFromTree(AVLNode<shared_ptr<Employee>, EmployeeComparebySalary> *root, int m)
 {
     if (m == 0)
     {
