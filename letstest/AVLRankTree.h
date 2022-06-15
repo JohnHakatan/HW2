@@ -36,9 +36,9 @@ public:
     AVLNode *getLeft() const;
     AVLNode *getRight() const;
     AVLNode *getParent() const;
-    int getRank();
-    int getSub_tree_size();
-    int getRankAsLeaf();
+    int getRank() const;
+    int getSub_tree_size() const;
+    int getRankAsLeaf() const;
     void setLeft(AVLNode *left);
     void setRight(AVLNode *right);
     void setParent(AVLNode *parent);
@@ -53,23 +53,23 @@ public:
 };
 
 template <class T, class comparator>
-int AVLNode<T, comparator>::getRankAsLeaf()
+int AVLNode<T, comparator>::getRankAsLeaf() const
 {
-    return this->RankAsLeaf;
+    return this->getData()->getGrade();
 }
 template <class T, class comparator>
-void AVLNode<T, comparator>::setRankAsLeaf(int grade)
+void AVLNode<T, comparator>::setRankAsLeaf(int grade) 
 {
    this->RankAsLeaf = grade;
  this->updateRank();
 }
 template <class T, class comparator>
-int AVLNode<T, comparator>::getRank()
+int AVLNode<T, comparator>::getRank() const
 {
     return this->Rank;
 }
 template <class T, class comparator>
-int AVLNode<T, comparator>::getSub_tree_size()
+int AVLNode<T, comparator>::getSub_tree_size() const
 {
     return this->sub_tree_size;
 }
@@ -238,7 +238,7 @@ void AVLNode<T, comparator>::updateRank()
     {
         right_son_rank = this->getRight()->getRank();
     }
-    int updated_rank = right_son_rank + left_son_rank + this->RankAsLeaf;
+    int updated_rank = right_son_rank + left_son_rank + this->getData()->getGrade();
    // cout<<data<<":"<<updated_rank<<endl;
     this->setRank(updated_rank);
     }
@@ -994,7 +994,7 @@ AVLTree<T, comparator>::~AVLTree()
 template <class T, class comparator>
 void AVLTree<T, comparator>::updateRanksAbove(AVLNode<T, comparator>* to_update,int grade)
 {    
-    to_update->setRankAsLeaf(grade);
+    to_update->setRankAsLeaf(to_update->getData()->getGrade());
     
     AVLNode<T, comparator>* current=to_update;
     while( current)

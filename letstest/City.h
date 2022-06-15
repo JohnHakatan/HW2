@@ -44,8 +44,8 @@ class City
     StatusType BumpGradeToEmployees(int lowerSalary, int higherSalary, int bumpGrade);
     double SumbumpGradeFromTree(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary>* tree,AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>* root,int m);
     void destroyCity();
-};
 
+};
 
 #ifdef __cplusplus
 }

@@ -136,14 +136,18 @@ StatusType HashTable<T>::insert(int key,T data)
 template <class T>
 StatusType HashTable<T>::remove(int key)
 {
-    if(!find(key))return FAILURE;
-
+    if(!find(key))
+    {
+        return FAILURE;
+    }
     LinkedList<T>* to_delete_from=this->dynamic_array[key%size_of_array];
     to_delete_from->RemoveNode(key);
     double shrink_factor=num_of_nodes/size_of_array;
     LinkedList<T>** new_array;
+   
     if(shrink_factor<0.5)
     {
+        
         //shrinking the array by 2 and copy all the nodes to new array 
         int new_size=this->size_of_array/2;
         try{
@@ -152,9 +156,9 @@ StatusType HashTable<T>::remove(int key)
             }   catch(std::bad_alloc& e){return FAILURE;}
     
        for(int j=0;j<new_size;j++)
-    {
-       new_array[j]=nullptr;
-    }
+      {
+            new_array[j]=nullptr;
+      }
         for(int i=0 ; i<size_of_array ; i++)
         {
             if(this->dynamic_array[i]&&this->dynamic_array[i]->size>0)
@@ -172,13 +176,11 @@ StatusType HashTable<T>::remove(int key)
             }
 
         }
-        this->num_of_nodes--;
         arrayDestroy();
         this->dynamic_array=new_array;
         this->size_of_array=new_size;
-
-
     }
+    this->num_of_nodes--;
     return SUCCESS;
 }
 template <class T>
