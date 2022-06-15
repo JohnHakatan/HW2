@@ -19,7 +19,7 @@ static void printBT1(const std::string& prefix, const AVLNode<K, V>* node, bool 
         std::cout << (isLeft ? "├──" : "└──" );
 
         // print the value of the node
-        std::cout  <<node->getData()->getId()<< ",height:"<<node->getHeight()<< ",RANK:"<<node->getRank() <<"rank as leaf  "<<node->getRankAsLeaf()<<"grade of node  "<<node->getData()->getGrade()<< std::endl;
+        std::cout  <<node->getData()->getId()<< ",salary"<<node->getData()->getSalary()<< ",RANK:"<<node->getRank()<<",sub:"<<node->getSub_tree_size()<<endl;
 
         // enter the next tree level - left and right branch
         printBT1( prefix + (isLeft ? "│   " : "    "), node->getLeft(), true);
@@ -233,6 +233,48 @@ StatusType City::EmployeeSalaryIncrease(int employeeID, int salaryIncrease)
     return SUCCESS;
 }
 
+static double mofa3_reshon_find_how_many_lower_than(AVLTree<shared_ptr<Employee>, EmployeeComparebySalary> *tree, AVLNode<shared_ptr<Employee>, EmployeeComparebySalary> *root, int Salary)
+{
+    if (!root)
+        return 0; // check this when using the function in avg function
+
+    // we arrived boundary - maybe there are more than one with Salary==Salary
+    if (root->getData()->getSalary() == Salary)
+    {
+
+        if (root->getLeft()&&(root->getLeft()->getData()->getSalary() > Salary))
+        {
+             if(root->getRight())
+           {
+            return root->getSub_tree_size()-root->getRight()->getSub_tree_size();
+           }else
+           {
+               return root->getSub_tree_size();
+           }
+        }
+        else if(root->getLeft())//==
+        {
+
+           return mofa3_reshon_find_how_many_lower_than(tree, root->getLeft(), Salary);
+        }
+        else//no left
+        {
+            return 1;//ROOT->GETSUBTREESIZE IS NOT TRUE TO USE
+        }
+    }
+    // max boundary is in the left sub - we only want the sum of the nodes before it so we don't add something
+    if (root->getData()->getSalary() < Salary)
+    {
+
+        return mofa3_reshon_find_how_many_lower_than(tree, root->getLeft(), Salary);
+    }
+
+    // max boundary is in the right - we want all of nodes that before max_boundary so we add
+   if(root->getRight() &&root->getLeft())return root->getSub_tree_size() - root->getRight()->getSub_tree_size() +mofa3_reshon_find_how_many_lower_than(tree, root->getRight(), Salary);
+    if(root->getRight()) return root->getSub_tree_size() - root->getRight()->getSub_tree_size();
+     if(root->getLeft())return root->getSub_tree_size() + mofa3_reshon_find_how_many_lower_than(tree, root->getRight(), Salary);
+     return root->getSub_tree_size();
+}
 static double find_how_many_lower_than(AVLTree<shared_ptr<Employee>, EmployeeComparebySalary> *tree, AVLNode<shared_ptr<Employee>, EmployeeComparebySalary> *root, int Salary)
 {
     if (!root)
@@ -244,11 +286,28 @@ static double find_how_many_lower_than(AVLTree<shared_ptr<Employee>, EmployeeCom
 
         if (root->getLeft()&&(root->getLeft()->getData()->getSalary() > Salary))
         {
-            return root->getSub_tree_size() - 1;
+            if(root->getRight()&& root->getRight()->getData()->getSalary()==Salary)
+           { return root->getSub_tree_size()-root->getRight()->getSub_tree_size()+find_how_many_lower_than(tree,root->getRight(),Salary);
+           }else if(root->getRight())
+           {
+            return root->getSub_tree_size()-root->getRight()->getSub_tree_size();
+           }else
+           {
+               return root->getSub_tree_size();
+           }
         }
         else //==
         {
-            return find_how_many_lower_than(tree, root->getLeft(), Salary);
+
+            if(root->getRight()&& root->getRight()->getData()->getSalary()==Salary)
+           { return root->getSub_tree_size()-root->getRight()->getSub_tree_size()+find_how_many_lower_than(tree,root->getRight(),Salary);//1+find
+           }else if(root->getRight())
+           {
+            return root->getSub_tree_size()-root->getRight()->getSub_tree_size();//1
+           }else
+           {
+               return root->getSub_tree_size();
+           }
         }
     }
     // max boundary is in the left sub - we only want the sum of the nodes before it so we don't add something
@@ -432,7 +491,7 @@ double City::SumbumpGradeFromTree(AVLTree<shared_ptr<Employee>, EmployeeCompareb
             return sum;*/
             
    
-    if (  m == 0)
+    if (  m == 0 )
     {
         return 0;
     }
@@ -467,6 +526,8 @@ StatusType City::AverageBumpGradeBetweenSalaryByGroup(int companyID, int lowerSa
         tree = &(this->employees_by_salary);
         grades_sum_salary_0 = this->sum_of_zero_employees_grade;
         num_of_zeros = this->employees_with_zero_salary;
+   
+
     }
     else // positive
     {
@@ -474,32 +535,64 @@ StatusType City::AverageBumpGradeBetweenSalaryByGroup(int companyID, int lowerSa
 
         grades_sum_salary_0 = c_ptr->sum_of_zero_employees_grade;
         num_of_zeros = c_ptr->employees_with_zero_salary;
+        
     }
    
     if ((tree && num_of_zeros == 0 && tree->getNum_of_nodes() == 0) || (c_ptr && num_of_zeros == 0 && c_ptr->num_of_employees==0))
     {
         return FAILURE;
     }
+    
     double toRtn = 0;
     if(!tree)tree=&c_ptr->employees_by_salary;
+    if(companyID==43 && lowerSalary==701 && higherSalary==701)printBT(*tree);
     if (tree->getNum_of_nodes() != 0)
     {
         //double first = find_sum_lower_than(tree, lowerSalary);
         //double last = find_sum_lower_than(tree, higherSalary);
 
         int num_first = find_how_many_lower_than(tree, tree->root, lowerSalary);
-        int num_last = find_how_many_lower_than(tree, tree->root, higherSalary);
-        double first = SumbumpGradeFromTree(tree,tree->root,num_first);
+        int num_last = mofa3_reshon_find_how_many_lower_than(tree, tree->root, higherSalary);
         double last = SumbumpGradeFromTree(tree,tree->root,num_last);
+        double first =0;
+        if(num_first!=num_last){first= SumbumpGradeFromTree(tree,tree->root,num_first);}
+        else
+        {
+            if(num_first!=0){first=SumbumpGradeFromTree(tree,tree->root,num_first-1);}
+            else{first=last=0;}
+                
+        }
+        
+       cout<<"num_first"<<num_first<<endl;
+        cout<<"num_last"<<num_last<<endl;
+        cout<<"frist"<<first<<endl;
+        cout<<"last"<<last<<endl;
         int me5ane=1;
         if(lowerSalary==0)
         {
            
-             if((num_of_zeros + num_first - num_last)!=0)me5ane=(num_of_zeros + num_first - num_last );
-            toRtn = (grades_sum_salary_0 - last  +first) / (me5ane) ;
+             if((num_of_zeros - num_first + num_last)!=0)me5ane=(num_of_zeros - num_first + num_last );
+            toRtn = abs(grades_sum_salary_0 + last -first) / abs(me5ane) ;
         }else{
-            if(( num_first - num_last)!=0)me5ane=(  num_first - num_last );
-            toRtn = (  first- last ) / (me5ane) ;           
+
+            if(( -num_first + num_last)!=0)me5ane=(  -num_first + num_last );
+
+            toRtn = abs(  -first + last ) / abs(me5ane) ;      
+            if(first==last)// first= last
+            {
+                
+                toRtn = abs(first/num_first);
+               
+            }
+
+            if(higherSalary >= tree->getMaxNode()->getData()->getSalary() && lowerSalary<=tree->getMinNode()->getData()->getSalary())
+            {
+              toRtn=abs((tree->getRoot()->getRank())/tree->getNum_of_nodes());
+            }
+            else if(lowerSalary >tree->getMaxNode()->getData()->getSalary())
+            {toRtn=0;
+
+            }   
         }
         
     }
@@ -507,7 +600,7 @@ StatusType City::AverageBumpGradeBetweenSalaryByGroup(int companyID, int lowerSa
     {
         if(lowerSalary==0)
         {
-            toRtn = (grades_sum_salary_0) / (num_of_zeros);
+            toRtn = abs((grades_sum_salary_0) / (num_of_zeros));
         }else{
             toRtn=0;
         }
