@@ -298,7 +298,7 @@ public:
     void clear_tree(AVLTree<T, comparator> &to_clear);
     AVLNode<T, comparator> *the_next_node_iterating(AVLNode<T, comparator> *node); // used in deleting
     void updateRanksAbove(AVLNode<T, comparator>* to_update,int grade);
-    AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>*  Select(AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>* root,int m)
+  //  AVLNode<T,comparator>*  Select(AVLNode<T,comparator>* root,int m);
 };
 
 

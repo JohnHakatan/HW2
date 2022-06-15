@@ -46,14 +46,23 @@ class LinkedList
 template <class T >
 void LinkedList<T>::InsertInStart(T data,int id)
 {
+    if( !this->head)
+    {
+        this->head=new ListNode<T>(nullptr,0);
+        head->next=new ListNode<T>(data,id);
+        this->size++;
+        return;
+    }
+
     ListNode<T>* new_node= new ListNode<T>(data,id);
-    new_node->next=head;
-    head=new_node;
+    new_node->next=head->next;
+    head->next=new_node;
+    this->size++;
 }
 template <class T>
 void LinkedList<T>::Insert(int id,T data)
 {
-    if( !this->head)
+    if(!this->head)
     {
         this->head=new ListNode<T>(nullptr,0);
         head->next=new ListNode<T>(data,id);
@@ -127,17 +136,22 @@ ListNode<T>* LinkedList<T>::Find(int id)
 {
     if(!this)return nullptr;
     ListNode<T>* current=this->head;
+
     while(current)
     {
-        current=current->next;
+         current=current->next;
         if(!current)
         {
             return nullptr;
         }
-        if(current->id==id)
+        
+          if(current->id==id)
         {
             return current;
         }
+        
+       
+      
     }
     return nullptr;
 }

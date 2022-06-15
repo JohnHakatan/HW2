@@ -88,7 +88,7 @@ StatusType CompanyValue(void *DS, int companyID)
     return ((City*)DS)->CompanyValue(companyID);
 }
 
-StatusType BumpGradeToEmployees(void *DS, int lowerSalary, int higherSalary, int bumpGrade)
+/*StatusType BumpGradeToEmployees(void *DS, int lowerSalary, int higherSalary, int bumpGrade)
 {
      if(!DS)
     {
@@ -96,7 +96,7 @@ StatusType BumpGradeToEmployees(void *DS, int lowerSalary, int higherSalary, int
     }
     return ((City*)DS)->BumpGradeToEmployees(  lowerSalary,  higherSalary,  bumpGrade);
 
-}
+}*/
 void Quit(void** DS)
 {
     if(!DS)

@@ -3,7 +3,7 @@
 
 //using namespace MEVNY;
 //#include "Employee.h"
-#include "AVLRanktree.h"
+#include "AVLRankTree.h"
 //#include "library1.h"
 #include "LinkedList.h"
 #include <memory>
@@ -30,19 +30,21 @@ Company(const Company&)=default;
 AVLTree<shared_ptr<Employee>,EmployeeComparebySalary> employees_by_salary;
 //AVLTree<shared_ptr<Employee>,EmployeeComparebyID> employees_by_id;
 shared_ptr<LinkedList<Company*>> family;//to update comapny values that in the same group 
-HashTable<shared_ptr<Employee>> Employees;
+HashTable<shared_ptr<Employee>>* Employees;
 int employees_with_zero_salary;
 double sum_of_zero_employees_grade;
 void setValue(double value);
 Company(int CompanyId,int Value=0):id(CompanyId),value(Value),num_of_employees(0),
-employees_by_salary(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary>()),family(nullptr),Employees(HashTable<shared_ptr<Employee>>()),
+employees_by_salary(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary>()),family( make_shared<LinkedList<Company*>>()),Employees(new HashTable<shared_ptr<Employee>>()),
 employees_with_zero_salary(0),sum_of_zero_employees_grade(0)
 {
   //adding Company To her Family
+
 this->family->InsertInStart(this,CompanyId);
 }
 
-~Company()=default;
+~Company()
+{delete Employees;}
 int getId()const;
 int getNumOfEmployees() const;
 double getValue()const;
@@ -101,8 +103,7 @@ class Employee
     int getCompanyId() const;
     void setSalary(int salary);
     void setGrade(int grade);
-    Employee(int id,int grade=0,int salary=0,int company_id =0,Company* company=nullptr ): 
-              id(id),grade(grade),salary(salary),company_id(company_id),company(company){}
+    Employee(int id,int grade=0,int salary=0,int company_id =0,Company* company=nullptr ):id(id),grade(grade),salary(salary),company_id(company_id),company(company){}
     Employee(const Employee& Employee)=default;
     Employee& operator=(const Employee& Employee)=default;
     ~Employee()=default;

@@ -5,6 +5,7 @@
 #include "AVLRankTree.h"
 #include "unionfind.h"
 #include "Company.h"
+#include "HashTable.h"
 #include <cstdio>
 //#include "Employee.h"
 #include<memory>
@@ -25,7 +26,7 @@ class City
     ~City();
     City(const City& city)=default;
     AVLTree<shared_ptr<Employee>,EmployeeComparebySalary> employees_by_salary;
-    HashTable<shared_ptr<Employee>> allEmployees;
+    HashTable<shared_ptr<Employee>>* allEmployees;
 
     Company* getCompanyById(int id);
 //AVLNode<shared_ptr<Employee>,EmployeeComparebyID>* getEmployeeById(int id);

@@ -32,7 +32,7 @@ void Company::RemoveEmployee(int EmployeeID)
   }
 
   employees_by_salary.AVLRemoveVal(to_remove1);
-  this->Employees.remove(EmployeeID);
+  this->Employees->remove(EmployeeID);
   this->num_of_employees--;
 
 
@@ -46,7 +46,7 @@ return this->id;
 void Company::addEmployeeToCompany( shared_ptr<Employee> employee)
 {
     shared_ptr<Employee>employee2=employee;
-    Employees.insert(employee->getId(),employee2);
+    Employees->insert(employee->getId(),employee2);
     this->num_of_employees++;
     this->employees_with_zero_salary++;
     this->sum_of_zero_employees_grade+=employee->getGrade();
@@ -65,7 +65,7 @@ void Company::setValue(double value)
 shared_ptr<Employee> Company::GetEmployee(int id)
 {
     //shared_ptr<Employee> to_find=make_shared<Employee>(id);
-    return Employees.find(id)->data;
+    return Employees->find(id)->data;
 }
 
 void Employee::setCompanyId(int id)
@@ -76,7 +76,7 @@ void Employee::setCompanyId(int id)
 bool Company::moveEmployees(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary>& employees_by_salary1,Company* company,double Factor)
 {
 //movingEmployees
-    int num=((company->Employees)->num_of_nodes);
+    int num=(company->Employees->num_of_nodes);
     AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>*  ptr=employees_by_salary1.getMaxNode();
     while (ptr!=NULL)
     {        
@@ -89,7 +89,7 @@ bool Company::moveEmployees(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary
     if(!this->employees_by_salary.moveTree(employees_by_salary1,this->employees_by_salary))return false;//maybe moveTree in avl must delete the old
     
     //updating hashTables
-    this->Employees.merge(company->Employees);
+    this->Employees->merge(company->Employees);
 
     this->num_of_employees+=num;
     
@@ -102,7 +102,7 @@ bool Company::moveEmployees(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary
 
 //udpating family
 //is the complexity here is good ?
-if(this->family==nullptr)
+/*if(this->family==nullptr)
 
 {
   this->family=make_shared<LinkedList<Company*>>();
@@ -112,10 +112,11 @@ if(this->family==nullptr)
 {
  company->family=make_shared<LinkedList<Company*>>();
 company->family->InsertInStart(company,company->getId());
-}
+}*/
 
 //calculating values of family members
-ListNode<Company*>* current=this->family->head;
+ListNode<Company*>* current=this->family->head->next;
+
 do
 {
 
@@ -125,8 +126,13 @@ do
 }while(current);
 
 //adding company to family
-current=company->family->head;//must update something in acuqired company ?
-company->family=this->family;
+//current=company->family->head;//must update something in acuqired company ?
+ListNode<Company*>* current1=company->family->head->next;
+while(current1)
+{
+ this->family->InsertInStart(current1->data,current1->id);
+  current1=current1->next;
+}
 
 return true;
 }
