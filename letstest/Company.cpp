@@ -73,23 +73,53 @@ void Employee::setCompanyId(int id)
   this->company_id=id;
 }
 
-bool Company::moveEmployees(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary>& employees_by_salary1,Company* company,double Factor)
+
+
+bool Company::moveEmployees(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary>* employees_by_salary1,Company* company,double Factor)
 {
+   //updating hashTables
+    this->Employees->merge(company->Employees);
+    
+    HashTable<shared_ptr<Employee>>* ptr1=this->Employees;
+    int pre=this->employees_with_zero_salary;
+     for(int i=0;i<ptr1->size_of_array;i++)
+    {
+        if(!ptr1->dynamic_array[i])continue;
+        ListNode<shared_ptr<Employee>>* to_move=(ptr1->dynamic_array[i]->head->next);
+        
+        while(to_move)
+        {
+          to_move->data->setCompanyId(this->id);
+        to_move->data->setCompany(this);
+          if(to_move->data->getSalary()==0){this->employees_with_zero_salary++;
+            this->sum_of_zero_employees_grade+=to_move->data->getGrade();
+          
+            
+          }
+    
+            to_move=to_move->next;
+        }
+    }
+    this->employees_with_zero_salary-=pre;
+
 //movingEmployees
-    int num=(company->Employees->num_of_nodes);
-    AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>*  ptr=employees_by_salary1.getMaxNode();
+    int num=(company->num_of_employees);
+   // printBT(employees_by_salary1);
+   /* AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>*  ptr=employees_by_salary1->getMaxNode();
+
     while (ptr!=NULL)
     {        
+     //cout<<"id"<<ptr->getData()->getId()<<endl;
         ptr->getData()->setCompanyId(this->id);
         ptr->getData()->setCompany(this);
-        ptr=employees_by_salary1.the_next_node_iterating(ptr);
-    }
+        ptr=employees_by_salary1->the_next_node_iterating(ptr);
+        
+    }*/
 
     //if returned false - error happened - udpating tree
-    if(!this->employees_by_salary.moveTree(employees_by_salary1,this->employees_by_salary))return false;//maybe moveTree in avl must delete the old
+    if(!this->employees_by_salary.moveTree(*employees_by_salary1,this->employees_by_salary))return false;//maybe moveTree in avl must delete the old
     
-    //updating hashTables
-    this->Employees->merge(company->Employees);
+  // cerr<<"000000000000000000000000000000000000"<<endl;
 
     this->num_of_employees+=num;
     

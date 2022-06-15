@@ -52,7 +52,7 @@ void RemoveEmployee(int EmployeeID);
 void addEmployeeToCompany(shared_ptr<Employee> employee);
 int increaseValue(int value_to_add);
 void updateEmployee(shared_ptr<Employee> employee);
-bool moveEmployees(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary>& employees_by_salary1,Company* company,double Factor);
+bool moveEmployees(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary>* employees_by_salary1,Company* company,double Factor);
 
 
 //AVLNode<shared_ptr<Employee>,EmployeeComparebyID>* GetEmployeeById(int id);

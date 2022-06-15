@@ -40,10 +40,13 @@ void HashTable<T>::merge(HashTable<T>* ptr)
     for(int i=0;i<ptr->size_of_array;i++)
     {
         if(!ptr->dynamic_array[i])continue;
-        ListNode<T>* to_move=(ptr->dynamic_array[i]->head);
+        ListNode<T>* to_move=(ptr->dynamic_array[i]->head->next);
+        
         while(to_move)
         {
+          
             this->insert(to_move->id,to_move->data);
+    
             to_move=to_move->next;
         }
     }

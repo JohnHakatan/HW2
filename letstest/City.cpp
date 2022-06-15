@@ -148,13 +148,15 @@ StatusType City::PromoteEmployee(int EmployeeID, int BumpGrade)
     {
         return FAILURE;
     }
-if(BumpGrade>=0){
+if(BumpGrade>0){
     to_update->setGrade(to_update->getGrade() + BumpGrade);
-   to_update->getCompany()->employees_by_salary.AVLRemoveVal(to_update);
+   if(to_update->getSalary() != 0){
+    to_update->getCompany()->employees_by_salary.AVLRemoveVal(to_update);
    to_update->getCompany()->employees_by_salary.AVLInsert(to_update,to_update->getGrade());
    
    employees_by_salary.AVLRemoveVal(to_update);
    employees_by_salary.AVLInsert(to_update,to_update->getGrade());
+   }
 //to_update->getCompany()->employees_by_salary.updateRanksAbove(to_update->getCompany()->employees_by_salary.find(to_update->getCompany()->employees_by_salary.getRoot(),to_update),to_update->getGrade());
 //employees_by_salary.updateRanksAbove(employees_by_salary.find(employees_by_salary.getRoot(),to_update),to_update->getGrade());
     if (to_update->getSalary() == 0)
@@ -162,7 +164,8 @@ if(BumpGrade>=0){
 
         to_update->getCompany()->sum_of_zero_employees_grade += BumpGrade;
         this->sum_of_zero_employees_grade += BumpGrade;
-    }}
+    }
+    }
 
     return SUCCESS;
 }
@@ -292,9 +295,13 @@ StatusType City::AcquireCompany(int AcquirerID, int TargetID, double Factor)
     if (!Target_ptr)
         return FAILURE;
 
-    if (!Acquirer_ptr->moveEmployees(Target_ptr->employees_by_salary, Target_ptr, Factor))
+    if (!Acquirer_ptr->moveEmployees(&Target_ptr->employees_by_salary, Target_ptr, Factor))
         return FAILURE; // dont forget employee with no salary
+        
+      
+
     this->Companies->unioun_groups_no_checking(AcquirerID,TargetID);
+    
     
     return SUCCESS;
 }
@@ -315,14 +322,21 @@ StatusType City::SumOfBumpGradeBetweenTopWorkersByGroup(int companyID, int m)
         {
             // there are not || companyID>=this->num_of_companiesugh employees
             if (employees_by_salary.getNum_of_nodes() < m)
-                return FAILURE;
+               return FAILURE;
+               
             sum_to_print = SumbumpGradeFromTree(&employees_by_salary,employees_by_salary.getRoot(), m);
         }
     }else
         {
             Company *c = getCompanyById(companyID);
             // company is not existed or there are not enough employees
-            if (!c || c->employees_by_salary.getNum_of_nodes() < m)
+         //   cout<<"treesize:"<<c->employees_by_salary.getNum_of_nodes() <<endl;
+
+      //AcquireCompany 2 1    cerr<<"sumofbump:"<<endl;
+//cerr<<c->Employees->num_of_nodes<<endl;
+//cerr<<c->employees_with_zero_salary<<endl;
+
+            if (!c || c->Employees->num_of_nodes - c->employees_with_zero_salary < m)
                 return FAILURE;
             sum_to_print = SumbumpGradeFromTree(&c->employees_by_salary , c->employees_by_salary.getRoot(), m);
         }
@@ -375,7 +389,7 @@ double City::SumbumpGradeFromTree(AVLTree<shared_ptr<Employee>, EmployeeCompareb
 {
    // int NumOfEmployees=tree->getNum_of_nodes();
            
-           /* double sum=0;
+            /*double sum=0;
              AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>* ptr=tree->getMaxNode();
             for(int i=0;i<m &&i<tree->getNum_of_nodes() ;i++  )
             {
@@ -386,8 +400,8 @@ double City::SumbumpGradeFromTree(AVLTree<shared_ptr<Employee>, EmployeeCompareb
             }
             return sum;*/
             
-    
-    if (m == 0)
+   
+    if (  m == 0)
     {
         return 0;
     }
@@ -402,7 +416,8 @@ double City::SumbumpGradeFromTree(AVLTree<shared_ptr<Employee>, EmployeeCompareb
     
     if(root->getLeft()&&root->getRight())return root->getRankAsLeaf() + root->getLeft()->getRank() + SumbumpGradeFromTree(tree,root->getRight(), m - root->getLeft()->getSub_tree_size()- 1 );
     if(root->getLeft())return root->getRankAsLeaf() + root->getLeft()->getRank();
-    return root->getRankAsLeaf()+SumbumpGradeFromTree(tree,root->getRight(), m - 1);
+    if(root->getRight())return root->getRankAsLeaf()+SumbumpGradeFromTree(tree,root->getRight(), m - 1);
+    return root->getRankAsLeaf();
 }
 
 StatusType City::AverageBumpGradeBetweenSalaryByGroup(int companyID, int lowerSalary, int higherSalary)
