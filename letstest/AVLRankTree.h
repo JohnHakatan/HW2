@@ -64,8 +64,9 @@ void AVLNode<T, comparator>::setRankAsLeaf(int grade)
  this->updateRank();
 }
 template <class T, class comparator>
-int AVLNode<T, comparator>::getRank() const
+int AVLNode<T, comparator>::getRank()const
 {
+    
     return this->Rank;
 }
 template <class T, class comparator>

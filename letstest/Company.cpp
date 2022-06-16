@@ -81,7 +81,8 @@ bool Company::moveEmployees(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary
     this->Employees->merge(company->Employees);
     
     HashTable<shared_ptr<Employee>>* ptr1=this->Employees;
-    int pre=this->employees_with_zero_salary;
+    this->sum_of_zero_employees_grade=0;
+    this->employees_with_zero_salary=0;
      for(int i=0;i<ptr1->size_of_array;i++)
     {
         if(!ptr1->dynamic_array[i])continue;
@@ -100,26 +101,13 @@ bool Company::moveEmployees(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary
             to_move=to_move->next;
         }
     }
-    this->employees_with_zero_salary-=pre;
+    
 
 //movingEmployees
     int num=(company->num_of_employees);
-   // printBT(employees_by_salary1);
-   /* AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>*  ptr=employees_by_salary1->getMaxNode();
-
-    while (ptr!=NULL)
-    {        
-     //cout<<"id"<<ptr->getData()->getId()<<endl;
-        ptr->getData()->setCompanyId(this->id);
-        ptr->getData()->setCompany(this);
-        ptr=employees_by_salary1->the_next_node_iterating(ptr);
-        
-    }*/
-
     //if returned false - error happened - udpating tree
     if(!this->employees_by_salary.moveTree(*employees_by_salary1,this->employees_by_salary))return false;//maybe moveTree in avl must delete the old
-    
-  // cerr<<"000000000000000000000000000000000000"<<endl;
+  
 
     this->num_of_employees+=num;
     
@@ -128,21 +116,6 @@ bool Company::moveEmployees(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary
     //what about employee with no salary ?
     //adding employees with no salary
     //adding size of them
-
-
-//udpating family
-//is the complexity here is good ?
-/*if(this->family==nullptr)
-
-{
-  this->family=make_shared<LinkedList<Company*>>();
-  this->family->InsertInStart(this,this->getId());
-}
- if(company->family==nullptr)
-{
- company->family=make_shared<LinkedList<Company*>>();
-company->family->InsertInStart(company,company->getId());
-}*/
 
 //calculating values of family members
 ListNode<Company*>* current=this->family->head->next;

@@ -71,19 +71,19 @@ class CompanyCompareByID{
                     const Company* b)const 
     {
 
-return b->getId()-a->getId();
+return a->getId()-b->getId();
     }
        int operator()(const Company a,
                     const Company b)const 
     {
 
-return b.getId()-a.getId();
+return a.getId()-b.getId();
     }
       int operator()(const shared_ptr<Company> a,
                     const shared_ptr<Company> b)const 
     {
 
-return b->getId()-a->getId();
+return a->getId()-b->getId();
     }
 };
 class Employee
@@ -153,7 +153,7 @@ class Employee
 
       if(a->getSalary()==b->getSalary())
       {
-        return (b->getId())-(a->getId());// maybe we must swap
+        return (a->getId())-(b->getId());// maybe we must swap
       }
       return (a->getSalary())-(b->getSalary());
     }
@@ -163,7 +163,7 @@ class Employee
     {
       if(a->getSalary()==b->getSalary())
       {
-        return (b->getId())-(a->getId());// maybe we must swap
+        return (a->getId())-(b->getId());// maybe we must swap
       }
       return (a->getSalary())-(b->getSalary());
 
@@ -176,7 +176,7 @@ class Employee
 
       if(a.getSalary()==b.getSalary())
       {
-        return (b.getId())-(a.getId());
+        return (a.getId())-(b.getId());
       }
       return (a.getSalary())-(b.getSalary());
     }
