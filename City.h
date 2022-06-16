@@ -42,10 +42,10 @@ class City
     StatusType CompanyValue( int companyID);
     StatusType AcquireCompany(int AcquirerID, int TargetID, double Factor);
     StatusType BumpGradeToEmployees(int lowerSalary, int higherSalary, int bumpGrade);
-    double SumbumpGradeFromTree(AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>* root,int m);
+    double SumbumpGradeFromTree(AVLTree<shared_ptr<Employee>,EmployeeComparebySalary>* tree,AVLNode<shared_ptr<Employee>,EmployeeComparebySalary>* root,int m);
     void destroyCity();
-};
 
+};
 
 #ifdef __cplusplus
 }

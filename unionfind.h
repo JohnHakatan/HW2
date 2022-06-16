@@ -39,10 +39,12 @@ public:
         if(x >= this->n)return nullptr;// check this
         if (parent[x]->getId() != x) {
  
-        
+           
             parent[x] = findd(parent[x]->getId());
+
  
         }
+         
  
         return parent[x];
     }
@@ -77,6 +79,7 @@ for(int i=0;i<n;i++)
 
        // T* to_move=parent[yset];
         parent[yset] = findd(xset);
+        
         //parent[yset]->moveEmployees(to_move);
     return true;
 
